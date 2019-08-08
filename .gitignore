@@ -1,0 +1,7 @@
+/build/
+*.o
+
+# SCons related files
+.sconsign.dblite
+config.log
+.sconf_temp
