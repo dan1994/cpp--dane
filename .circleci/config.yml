@@ -13,11 +13,11 @@ jobs:
 
             - run:
                 name: Install clang
-                command: sudo apt install -y clang
+                command: apt update && sudo apt install -y clang
 
             - run:
                 name: Install scons
-                command: sudo apt install -y scons
+                command: apt update && sudo apt install -y scons
 
             - run:
                 name: Build
