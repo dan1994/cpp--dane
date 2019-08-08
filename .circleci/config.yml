@@ -8,9 +8,17 @@ jobs:
             - checkout
 
             - run:
-                name: Greeting
-                command: echo Hello, world.
+                name: Install clang
+                command: sudo apt install clang
 
             - run:
-                name: Print the Current Time
-                command: date
+                name: Install scons
+                command: sudo apt install scons
+
+            - run:
+                name: Build
+                command: scons
+
+            - run:
+                name: Run
+                command: build/dane
