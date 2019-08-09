@@ -13,10 +13,22 @@ jobs:
                     apt update
                     apt install -y clang
                     apt install -y scons
+                    apt install -y libgtest-dev
+                    apt install -y cmake
+                    cd /usr/src/gtest
+                    cmake CMakeLists.txt
+                    make
+                    cp *.a /usr/lib
+                    ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a
+                    ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
             - run:
                 name: Build
                 command: scons
+
+            - run:
+                name: Unit Test
+                command: build/gtest
 
             - run:
                 name: Run
