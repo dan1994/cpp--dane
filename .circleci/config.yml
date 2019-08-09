@@ -8,16 +8,11 @@ jobs:
             - checkout
 
             - run:
-                name: Install sudo
-                command: apt update && apt install -y sudo && rm -rf /var/lib/apt/lists/*
-
-            - run:
-                name: Install clang
-                command: apt update && sudo apt install -y clang
-
-            - run:
-                name: Install scons
-                command: apt update && sudo apt install -y scons
+                name: Setup
+                command: |
+                    apt update
+                    apt install -y clang
+                    apt install -y scons
 
             - run:
                 name: Build
