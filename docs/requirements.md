@@ -90,7 +90,7 @@ This section contains the encoded text itself. This section is present only if t
 - `padding` is the amount of 'garbage' bits that are required to make `encoded_text` alligned to byte boundary
 - `encoded_text` is the encoded text with padding located at its start
 
-## ABI
+## CLI
 - `dane -h`
 	- Print usage information
 - `dane [-c | -i encoding_file] -e text_file encoded_file`
