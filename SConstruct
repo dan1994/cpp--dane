@@ -3,13 +3,14 @@ import os
 CXX='clang++'
 CXXFLAGS_COMMON = ['-Wall']
 LINKFLAGS_COMMON = []
+LINKFLAGS_COVERGAE = ['-fprofile-instr-generate', '-fcoverage-mapping']
 LIBS_COMMON = []
 LIBS_GTEST = ['pthread', 'gtest', 'gtest_main']
 
 configs = {
 	'debug': {
 		'CXXFLAGS': CXXFLAGS_COMMON + ['-g'],
-		'LINKFLAGS': LINKFLAGS_COMMON,
+		'LINKFLAGS': LINKFLAGS_COMMON + LINKFLAGS_COVERGAE,
 		'LIBS': LIBS_COMMON,
 		'SourceDir': 'src',
 		'VariantDir': 'build/debug',
@@ -27,7 +28,7 @@ configs = {
 	},
 	'test': {
 		'CXXFLAGS': CXXFLAGS_COMMON + ['-g'],
-		'LINKFLAGS': LINKFLAGS_COMMON,
+		'LINKFLAGS': LINKFLAGS_COMMON + LINKFLAGS_COVERGAE,
 		'LIBS': LIBS_COMMON + LIBS_GTEST,
 		'SourceDir': 'test',
 		'VariantDir': 'build/test',
