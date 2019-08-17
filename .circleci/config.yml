@@ -24,12 +24,12 @@ jobs:
 
             - run:
                 name: Build
-                command: scons
+                command: scons .
 
             - run:
                 name: Unit Test
-                command: build/gtest
+                command: build/test/gtest
 
             - run:
                 name: Run
-                command: build/dane
+                command: build/debug/dane
