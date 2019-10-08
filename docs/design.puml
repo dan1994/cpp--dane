@@ -1,0 +1,34 @@
+@startuml dane
+class BiMap<T,U> {
+	{field}		- mapping : std::map<T,U>
+	{field}		- reverseMapping : std::map<U,T>
+	{method}	+ getByT(const T &) const : const U &
+	{method}	+ getByU(const U &) const : const T &
+	{method}	+ insert(T, U) : void
+	{method}	+ removeByT(const T &) : void
+	{method}	+ removeByU(const U &) : void
+}
+
+class EncodingFactory<T> {
+	{method}	+ constexpr static makeCanonicalEncoding() : T
+	{method}	+ static makeEncodingFromText(const std::string &) : T
+	{method}	+ static makeEncodingFromDaneFile(const std::string &) : T
+}
+
+class BaseEncoding {
+	{field}		- mapping : BiMap<char, std::vector<bool>>
+	{method}	+ encoding() : const BiMap<char, std::vector<bool>> &
+	{method}	* friend operator<<(ostream &, const BaseEncoding &) : ostream &
+}
+
+class HuffmanEncoding {
+	{method}
+}
+
+class EncoderDecoder {
+
+}
+
+BaseEncoding <|-- HuffmanEncoding
+BaseEncoding *-- BiMap
+@enduml
