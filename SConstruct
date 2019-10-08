@@ -2,9 +2,9 @@ import os
 
 CXX='clang++'
 CXXFLAGS_COMMON = ['-Wall']
-CXXFLAGS_COVERGAE = ['-fprofile-instr-generate', '-fcoverage-mapping']
+CXXFLAGS_COVERGAE = ['-fprofile-arcs', '-ftest-coverage']
 LINKFLAGS_COMMON = []
-LINKFLAGS_COVERGAE = ['-fprofile-instr-generate', '-fcoverage-mapping']
+LINKFLAGS_COVERGAE = ['--coverage']
 LIBS_COMMON = []
 LIBS_GTEST = ['pthread', 'gtest', 'gtest_main']
 
