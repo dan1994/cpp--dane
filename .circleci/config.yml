@@ -15,6 +15,8 @@ jobs:
                     apt install -y scons
                     apt install -y libgtest-dev
                     apt install -y cmake
+                    apt install -y llvm
+                    apt install -y lcov
                     cd /usr/src/gtest
                     cmake CMakeLists.txt
                     make
