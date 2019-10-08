@@ -1,5 +1,11 @@
 import os
 
+def coverage_builder(path, executable):
+	def cmd_func(target, source, env):
+		if not GetOption('clean'):
+			os.system('utils/coverage/coverage.sh %s %s' % (path, executable))
+	return Builder(action=cmd_func)
+
 CXX='clang++'
 CXXFLAGS_COMMON = ['-Wall']
 CXXFLAGS_COVERGAE = ['-fprofile-arcs', '-ftest-coverage']
@@ -16,7 +22,14 @@ configs = {
 		'SourceDir': 'src',
 		'VariantDir': 'build/debug',
 		'target': 'dane',
-		'source': ['main.cpp']
+		'source': ['main.cpp'],
+		'builders': [
+			{
+				'name': 'coverage',
+				'builder': coverage_builder(os.path.abspath('build/debug'), 'dane'),
+				'target': os.path.abspath('build/debug/lcov.info')
+			}
+		]
 	},
 	'release': {
 		'CXXFLAGS': CXXFLAGS_COMMON + ['-O3'],
@@ -25,7 +38,8 @@ configs = {
 		'SourceDir': 'src',
 		'VariantDir': 'build/release',
 		'target': 'dane',
-		'source': ['main.cpp']
+		'source': ['main.cpp'],
+		'builders': []
 	},
 	'test': {
 		'CXXFLAGS': CXXFLAGS_COMMON + CXXFLAGS_COVERGAE + ['-g'],
@@ -34,7 +48,14 @@ configs = {
 		'SourceDir': 'test',
 		'VariantDir': 'build/test',
 		'target': 'gtest',
-		'source': ['tests.cpp']
+		'source': ['tests.cpp'],
+		'builders': [
+			{
+				'name': 'coverage',
+				'builder': coverage_builder(os.path.abspath('build/test'), 'gtest'),
+				'target': os.path.abspath('build/test/lcov.info')
+			}
+		]
 	}
 }
 
@@ -42,8 +63,11 @@ for name, config in configs.items():
 	config['target'] = os.path.join(config['VariantDir'], config['target'])
 	config['source'] = [os.path.join(config['VariantDir'], source) for source in config['source']]
 	config['env'] = Environment(CXX=CXX, CXXFLAGS=config['CXXFLAGS'], LINKFLAGS=config['LINKFLAGS'], LIBS=config['LIBS'])
-	config['env'].VariantDir(config['VariantDir'], config['SourceDir'])
+	config['env'].VariantDir(config['VariantDir'], config['SourceDir'], duplicate=0)
 	config['program'] = config['env'].Program(target=config['target'], source=config['source'])
+	for builder in config['builders']:
+		config['env'].Append(BUILDERS={builder['name']: builder['builder']})
+		eval("config['env'].%s(builder['target'], config['program'])" % builder['name'])
 	config['env'].Alias(name, config['target'])
 
 
