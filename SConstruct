@@ -2,6 +2,7 @@ import os
 
 CXX='clang++'
 CXXFLAGS_COMMON = ['-Wall']
+CXXFLAGS_COVERGAE = ['-fprofile-instr-generate', '-fcoverage-mapping']
 LINKFLAGS_COMMON = []
 LINKFLAGS_COVERGAE = ['-fprofile-instr-generate', '-fcoverage-mapping']
 LIBS_COMMON = []
@@ -9,7 +10,7 @@ LIBS_GTEST = ['pthread', 'gtest', 'gtest_main']
 
 configs = {
 	'debug': {
-		'CXXFLAGS': CXXFLAGS_COMMON + ['-g'],
+		'CXXFLAGS': CXXFLAGS_COMMON + CXXFLAGS_COVERGAE + ['-g'],
 		'LINKFLAGS': LINKFLAGS_COMMON + LINKFLAGS_COVERGAE,
 		'LIBS': LIBS_COMMON,
 		'SourceDir': 'src',
@@ -27,7 +28,7 @@ configs = {
 		'source': ['main.cpp']
 	},
 	'test': {
-		'CXXFLAGS': CXXFLAGS_COMMON + ['-g'],
+		'CXXFLAGS': CXXFLAGS_COMMON + CXXFLAGS_COVERGAE + ['-g'],
 		'LINKFLAGS': LINKFLAGS_COMMON + LINKFLAGS_COVERGAE,
 		'LIBS': LIBS_COMMON + LIBS_GTEST,
 		'SourceDir': 'test',
