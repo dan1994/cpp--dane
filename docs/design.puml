@@ -1,24 +1,24 @@
 @startuml dane
 class BiMap<T,U> {
-	{field}		- mapping : std::map<T,U>
-	{field}		- reverseMapping : std::map<U,T>
-	{method}	+ getByT(const T &) const : const U &
-	{method}	+ getByU(const U &) const : const T &
-	{method}	+ insert(T, U) : void
-	{method}	+ removeByT(const T &) : void
-	{method}	+ removeByU(const U &) : void
+	- {field}	mapping : std::unordered_map<T,U>
+	- {field}	reverseMapping : std::unordered_map<U,T>
+	+ {method}	getByT(const T &) const : const U &
+	+ {method}	getByU(const U &) const : const T &
+	+ {method}	insert(T, U) : void
+	+ {method}	removeByT(const T &) : void
+	+ {method}	removeByU(const U &) : void
 }
 
-class EncodingFactory<T> {
-	{method}	+ constexpr static makeCanonicalEncoding() : T
-	{method}	+ static makeEncodingFromText(const std::string &) : T
-	{method}	+ static makeEncodingFromDaneFile(const std::string &) : T
+class EncodingFactory<std::string> {
+	+ {method}	{static} constexpr makeCanonicalEncoding() : BiMap<char, std..
+	+ {method}	{static} makeEncodingFromText(const std::string &) : T
+	+ {method}	{static} makeEncodingFromDaneFile(const std::string &) : T
 }
 
-class BaseEncoding {
-	{field}		- mapping : BiMap<char, std::vector<bool>>
-	{method}	+ encoding() : const BiMap<char, std::vector<bool>> &
-	{method}	* friend operator<<(ostream &, const BaseEncoding &) : ostream &
+class Encoding {
+	- {field}	mapping : BiMap<char, std::pair<unsigned char, unsigned int>>
+	+ {method}	encoding() : const BiMap<char, std::pair<unsigned char, unsigned int>> &
+	* {method}	friend operator<<(ostream &, const Encoding &) : ostream &
 }
 
 class HuffmanEncoding {
@@ -26,9 +26,12 @@ class HuffmanEncoding {
 }
 
 class EncoderDecoder {
-
+	- {field}	encoding : Encoding
+	+ {method}	EncoderDecoder(const Encoding)
+	+ {method}	encode(const std::string &) const : std::vector<bool>
+	+ {method}	decode(const std::vector<bool> &) const : std::string
 }
 
-BaseEncoding <|-- HuffmanEncoding
-BaseEncoding *-- BiMap
+Encoding <|-- HuffmanEncoding
+Encoding *-- BiMap
 @enduml
