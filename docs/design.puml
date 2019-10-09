@@ -2,36 +2,43 @@
 class BiMap<T,U> {
 	- {field}	mapping : std::unordered_map<T,U>
 	- {field}	reverseMapping : std::unordered_map<U,T>
-	+ {method}	getByT(const T &) const : const U &
-	+ {method}	getByU(const U &) const : const T &
-	+ {method}	insert(T, U) : void
-	+ {method}	removeByT(const T &) : void
-	+ {method}	removeByU(const U &) : void
-}
-
-class EncodingFactory<std::string> {
-	+ {method}	{static} constexpr makeCanonicalEncoding() : BiMap<char, std..
-	+ {method}	{static} makeEncodingFromText(const std::string &) : T
-	+ {method}	{static} makeEncodingFromDaneFile(const std::string &) : T
-}
-
-class Encoding {
-	- {field}	mapping : BiMap<char, std::pair<unsigned char, unsigned int>>
-	+ {method}	encoding() : const BiMap<char, std::pair<unsigned char, unsigned int>> &
-	* {method}	friend operator<<(ostream &, const Encoding &) : ostream &
-}
-
-class HuffmanEncoding {
-	{method}
+	+ {method}	atT(const T &) const : const U &
+	+ {method}	atU(const U &) const : const T &
+	+ {method}	insert(T, U) : bool
 }
 
 class EncoderDecoder {
-	- {field}	encoding : Encoding
-	+ {method}	EncoderDecoder(const Encoding)
-	+ {method}	encode(const std::string &) const : std::vector<bool>
-	+ {method}	decode(const std::vector<bool> &) const : std::string
+	- {field}	hasEncoding : bool
+	+ {method}	encode(const std::string &plaintext) const = 0 : std::string
+	+ {method}	decode(const std::string &encodedPlaintext) const = 0 : std::string
+	+ {method}	constexpr makeCanonicalEncoding() = 0 : void
+	+ {method}	makeEncodingFromText(const std::string &plaintext) = 0 : void
+	+ {method}	makeEncodingFromDaneEncodingSection(const std::string &header) = 0 : void
+	+ {method}	exportEncoding() const = 0 : const std::string
 }
 
-Encoding <|-- HuffmanEncoding
-Encoding *-- BiMap
+class HuffmanEncoderDecoder {
+	- {field}	mapping : BiMap<char, std::pair<unsigned char, unsigned int>>
+	- {method}	{static} getFrequencies(const std::string &plaintext) : std::list<HuffmanNode>
+	- {method}	{static} buildPrefixlessTree(std::list<HuffmanNode> &frequencies) : HuffmanNode &
+	- {method}	createMapping(const HuffmanNode &root) : void
+	+ {method}	encode(const std::string &plaintext) const : std::string
+	+ {method}	decode(const std::string &encodedPlaintext) const : std::string
+	+ {method}	constexpr makeCanonicalEncoding() : void
+	+ {method}	makeEncodingFromText(const std::string &plaintext) : void
+	+ {method}	makeEncodingFromDaneEncodingSection(const std::string &header) : void
+	+ {method}	exportEncoding() const : const std::string
+}
+
+class HuffmanNode {
+	+ {field}	character : const char
+	+ {field}	frequency : const int
+	+ {field}	leftSon : HuffmanNode *
+	+ {field}	rightSon : HuffmanNode *
+	+ {method}	HuffmanNode(const char character, const int frequency)
+}
+
+EncoderDecoder <|-- HuffmanEncoderDecoder
+HuffmanEncoderDecoder *-- BiMap
+HuffmanEncoderDecoder +-- "Private Nested" HuffmanNode
 @enduml
