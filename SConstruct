@@ -1,9 +1,9 @@
 import os
 
-def coverage_builder(path, executable):
+def coverage_builder(source_path, build_path, executable):
 	def cmd_func(target, source, env):
 		if not GetOption('clean'):
-			os.system('utils/coverage/coverage.sh %s %s' % (path, executable))
+			os.system('utils/coverage/coverage.sh %s %s %s' % (source_path, build_path, executable))
 	return Builder(action=cmd_func)
 
 CXX='clang++'
@@ -26,7 +26,7 @@ configs = {
 		'builders': [
 			{
 				'name': 'coverage',
-				'builder': coverage_builder(os.path.abspath('build/debug'), 'dane'),
+				'builder': coverage_builder(os.path.abspath('src'), os.path.abspath('build/debug'), 'dane'),
 				'target': os.path.abspath('build/debug/lcov.info')
 			}
 		]
@@ -52,7 +52,7 @@ configs = {
 		'builders': [
 			{
 				'name': 'coverage',
-				'builder': coverage_builder(os.path.abspath('build/test'), 'gtest'),
+				'builder': coverage_builder(os.path.abspath('test'), os.path.abspath('build/test'), 'gtest'),
 				'target': os.path.abspath('build/test/lcov.info')
 			}
 		]
