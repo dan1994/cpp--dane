@@ -1,0 +1,125 @@
+@startuml dane
+class BiMap<T,U> {
+	- {field}	mapping : std::unordered_map<T,U>
+	- {field}	reverseMapping : std::unordered_map<U,T>
+	+ {method}	atT(const T &t) const : const U &
+	+ {method}	atU(const U &u) const : const T &
+	+ {method}	insert(T t, U u) : bool
+}
+
+class PaddedString {
+	+ {field}	padding_size : uint8_t
+	+ {field}	s : std::string
+}
+
+abstract class AbstractEncoderDecoder {
+	using MappingType = void *
+	using EncodedType = void *
+	==
+	# {field}	useCanonicalEncoding : bool
+	# {field}	mapping : MappingType
+	--
+	+ {method}	{abstract} encode(const std::string &plaintext) const : EncodedType
+	+ {method}	{abstract} decode(const EncodedType &encodedPlaintext) const : std::string
+	+ {method}	{abstract} useCanonicalEncoding() : void
+	+ {method}	{abstract} makeEncodingFromText(const std::string &plaintext) : void
+	+ {method}	{abstract} setEncoding(MappingType &&mapping) : void
+	+ {method}	{abstract} getEncoding() const : const MappingType &
+}
+
+AbstractEncoderDecoder <|-- HuffmanEncoderDecoder
+HuffmanEncoderDecoder *-- BiMap
+HuffmanEncoderDecoder *-- PaddedString
+HuffmanEncoderDecoder +-- HuffmanNode : "Private Nested"
+class HuffmanEncoderDecoder {
+	using MappingType = BiMap<char, std::pair<unsigned char, unsigned int>>
+	using EncodedType = PaddedString
+	==
+	- {field}	{static} canonicalMapping : constexpr MappingType
+	--
+	- {method}	{static} getFrequencies(const std::string &plaintext) : std::list<HuffmanNode>
+	- {method}	{static} buildPrefixlessTree(std::list<HuffmanNode> &frequencies) : HuffmanNode &
+	- {method}	{static} createMapping(const HuffmanNode &root) : MappingType
+}
+
+class HuffmanNode {
+	+ {field}	character : const char
+	+ {field}	frequency : const int
+	+ {field}	leftSon : std::unique_ptr<HuffmanNode>
+	+ {field}	rightSon : std::unique_ptr<HuffmanNode>
+	+ {method}	HuffmanNode(const char character, const int frequency)
+}
+
+DaneStream +-- DaneHeader : Protected Nested
+class DaneHeader {
+	+ {field}	{static} magic : constexpr uint16_t
+	+ {field}	{static} version : constexpr uint8_t
+	+ {field}	encoding : uint8_t
+	+ {field}	options : uint8_t
+	+ {field}	checksum : uint16_t
+	+ {method}	toString() const : std::string
+	+ {method}	fromString(const std::string &s) : void
+}
+
+DaneHeader +-- Options : Public Nested
+note right of Options : To be able to access DaneHeader::Options::<option>
+class Options {
+	+ {field}	{static} Options : enum
+}
+
+DaneStream *-- AbstractEncoderDecoder
+DaneStream *-- EncodingId
+class DaneStream<T : public AbstractEncoderDecoder> {
+	# {field}	daneHeader : DaneHeader
+	# {field}	encoderDecoder : T
+	# {field}	plaintext : std::string
+	# {field}	encodedPlaintext : std::string
+	# {method}	calculateChecksum() : uint16_t
+	+ {method}	setOptions(uint8_t options) : void
+}
+
+DaneStream <|-- EncoderDaneStream
+class EncoderDaneStream<T : public AbstractEncoderDecoder> {
+	- {field}	extractEncodingFromText : bool
+	- {method}	encodingToString() const : std::string
+	- {method}	encodedToString() const : std::string
+	- {method}	updateChecksum() : void
+	+ {method}	useCanonicalEncoding() : void
+	+ {method}	makeEncodingFromText(const std::string &plaintext) : void
+	+ {method}	setEncoding(T::MappingType &&mapping) : void
+	+ {method}	friend operator<<(ostream &os, const EncoderDaneStream &rhs) : ostream &
+	+ {method}	friend operator>>(istream &is, const EncoderDaneStream &rhs) : istream &
+}
+
+DaneStream <|-- DecoderDaneStream
+class DecoderDaneStream<T : public AbstractEncoderDecoder> {
+	- {method}	validateDaneHeader() const : bool
+	- {method}	parseEncodingSection(const std::string &encodingSection) : void
+	- {method}	parseEncodedSection(const std::string &encodedSection) : void
+	+ {method}	getEncoding() const : T::MappingType
+	+ {method}	friend operator<<(ostream &os, const DecoderDaneStream &rhs) : ostream &
+	+ {method}	friend operator>>(istream &is, const DecoderDaneStream &rhs) : istream &
+}
+
+class EncodingIdBase {
+	- {field}	{static} mapping : std::unordered_map<string, int>
+	+ {method}	{static} register(EncodingIdBase *encodingId) : void
+	+ {method}	{abstract} constexpr getEncodingName() : std::string
+	+ {method}	{abstract} constexpr getEncodingId() : int
+}
+
+EncodingIdBase <|-- EncodingId
+EncodingId *-- AbstractEncoderDecoder
+class EncodingId<T : public AbstractEncoderDecoder> << (S,Orange) Singleton >> {
+	- {field}	{static} singleton : EncodingId<T>
+	--
+	- {method}	EncodingId()
+	+ {method}	get() : EncodingId &
+	--
+	+ {method}	EncodingId(const EncodingId &other) = delete
+	+ {method}	EncodingId(const EncodingId &&other) = delete
+	+ {method}	operator=(const EncodingId &rhs) : EncodingId = delete
+	+ {method}	operator=(const EncodingId &&rhs) : EncodingId = delete
+}
+
+@enduml
