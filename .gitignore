@@ -1,5 +1,7 @@
-/build/
-*.o
+bin/
+obj/
+__pycahce__/
+*.pyc
 
 # SCons related files
 .sconsign.dblite

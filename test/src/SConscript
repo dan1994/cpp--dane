@@ -1,0 +1,60 @@
+import os
+import glob2
+import hashlib
+import json
+import shutil
+from tests import *
+
+def get_targets(source):
+  source_path = os.path.dirname(source)
+  source_basename = str(os.path.basename(source))
+  object_file = objroot + source_path + source_basename.replace('.cpp', '.o')
+  binary_file = binroot + source_path + source_basename.replace('.cpp', '')
+  return object_file, binary_file
+
+def remove_if_exists(file):
+  if (os.path.exists(file)):
+    os.remove(file)
+
+def do_clean():
+  for source, _ in test_spec.items():
+    object_file, binary_file = get_targets(source)
+    remove_if_exists(object_file)
+    remove_if_exists(binary_file)
+  for subdir, dirs, files in os.walk(objroot):
+    for dir in dirs:
+      shutil.rmtree(os.path.join(subdir, dir))
+  for subdir, dirs, files in os.walk(binroot):
+    for dir in dirs:
+      shutil.rmtree(os.path.join(subdir, dir))
+
+def do_build():
+  with open(dut_objroot + 'buildmap.json') as fp:
+    buildmap = json.load(fp)
+  with open(dut_objroot + 'contents.json') as fp:
+    contents = json.load(fp)
+  objhash = buildmap[build]
+
+  envs = dict()
+  for key, dut_list in test_spec.items():
+    source = key + '.cpp'
+    envs[source] = Environment(CCFLAGS = cflags, LINKFLAGS = linkflags)
+    object_file, binary_file = get_targets(source)
+    objects = list()
+    for dut in dut_list:
+      objects.append(dut_objroot + objhash + '/' + dut + '.o')
+    objects.append(object_file)
+    envs[source].Object(object_file, source)
+    envs[source].Program(binary_file, objects)
+    print("> Preparing: " + str(source) + " => " + binary_file)
+    print("> ---")
+
+env = DefaultEnvironment()
+if env.GetOption('clean'):
+  do_clean()
+  print("Tests: clean specification done")
+else:
+  do_build()
+  print("Tests: build specification done")
+
+print("===")
