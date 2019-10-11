@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <BiMap/BiMap.h>
+#include "BiMap.h"
 
 TEST(BiMap, AccessNotExistingT) {
 	BiMap<int, int> bm;
