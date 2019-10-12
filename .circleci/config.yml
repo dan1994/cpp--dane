@@ -2,7 +2,7 @@ version: 2
 jobs:
     build:
         docker:
-            - image: debian:stretch
+            - image: debian:buster
 
         steps:
             - checkout
@@ -11,7 +11,7 @@ jobs:
                 name: Setup
                 command: |
                     apt update
-                    apt install -y clang-6.0
+                    apt install -y clang
                     apt install -y scons
                     apt install -y libgtest-dev
                     apt install -y cmake
