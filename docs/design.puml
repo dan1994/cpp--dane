@@ -37,7 +37,7 @@ class HuffmanEncoderDecoder {
 	using MappingType = BiMap<char, std::pair<unsigned char, unsigned int>>
 	using EncodedType = PaddedString
 	==
-	- {field}	{static} canonicalMapping : constexpr MappingType
+	- {field}	{static} canonicalMapping : const MappingType
 	--
 	- {method}	{static} getFrequencies(const std::string &plaintext) : std::list<HuffmanNode>
 	- {method}	{static} buildPrefixlessTree(std::list<HuffmanNode> &frequencies) : HuffmanNode &
