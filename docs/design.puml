@@ -18,7 +18,7 @@ abstract class AbstractEncoderDecoder {
 	using MappingType = void *
 	using EncodedType = void *
 	==
-	# {field}	useCanonicalEncoding : bool
+	# {field}	usingCanonicalEncoding : bool
 	# {field}	mapping : MappingType
 	--
 	+ {method}	{abstract} encode(const std::string &plaintext) const : EncodedType
@@ -39,17 +39,20 @@ class HuffmanEncoderDecoder {
 	==
 	- {field}	{static} canonicalMapping : const MappingType
 	--
-	- {method}	{static} getFrequencies(const std::string &plaintext) : std::list<HuffmanNode>
-	- {method}	{static} buildPrefixlessTree(std::list<HuffmanNode> &frequencies) : HuffmanNode &
+	- {method}	{static} getFrequencies(const std::string &plaintext) : std::vector<HuffmanNode>
+	- {method}	{static} buildPrefixlessTree(std::vector<HuffmanNode> &frequencies) : HuffmanNode &
 	- {method}	{static} createMapping(const HuffmanNode &root) : MappingType
 }
 
 class HuffmanNode {
-	+ {field}	character : const char
-	+ {field}	frequency : const int
+	+ {field}	character : char
+	+ {field}	frequency : int
 	+ {field}	leftSon : std::unique_ptr<HuffmanNode>
 	+ {field}	rightSon : std::unique_ptr<HuffmanNode>
-	+ {method}	HuffmanNode(const char character, const int frequency)
+	+ {method}	HuffmanNode()
+	+ {method}	HuffmanNode(char c)
+	+ {method}	operator==(const HuffmanNode &rhs) const : bool
+	+ {method}	operator++(int) : HuffmanNode &
 }
 
 DaneStream +-- DaneHeader : Protected Nested

@@ -9,7 +9,7 @@ public:
 	using EncodedType = void *;
 
 protected:
-	bool useCanonicalEncoding;
+	bool usingCanonicalEncoding;
 	MappingType mapping;
 
 public:
