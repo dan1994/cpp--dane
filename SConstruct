@@ -13,6 +13,7 @@ def do_all(name, cxxflags, linkflags, libs, source_dirs, target, exclude_sources
 	target = os.path.join('build', name, target)
 	source = collect_sources(source_dirs, exclude_sources)
 	env = Environment(CXX='clang++', CXXFLAGS=cxxflags, LINKFLAGS=linkflags, LIBS=libs, CPPPATH=['include', 'test/include'])
+	env['ENV']['TERM'] = os.environ.get('TERM')
 	objs = []
 	for s in source:
 		# Remove file suffix
