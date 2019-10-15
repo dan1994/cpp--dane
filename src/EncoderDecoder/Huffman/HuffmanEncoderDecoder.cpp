@@ -36,7 +36,7 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(NodeVe
 	// Copy to list non-zero frequency elements
 	std::list<NodePtr> frequenciesList;
 	std::copy(std::make_move_iterator(activeSymbols), std::make_move_iterator(frequencies.end()),
-		frequenciesList.begin());
+		std::back_inserter(frequenciesList));
 
 	// If there are no elements, return an empty node
 	if(frequenciesList.empty()) {
