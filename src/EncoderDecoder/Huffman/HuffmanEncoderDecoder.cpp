@@ -31,7 +31,7 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(NodeVe
 
 	// Find the first element with non-zero frequency
 	auto activeSymbols = std::upper_bound(frequencies.begin(), frequencies.end(), 0,
-		[](int value, NodePtr &n) { return n->frequency < value; });
+		[](int value, NodePtr &n) { return n->frequency > value; });
 
 	// Copy to list non-zero frequency elements
 	std::list<NodePtr> frequenciesList;
