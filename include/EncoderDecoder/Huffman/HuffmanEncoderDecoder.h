@@ -17,9 +17,10 @@ private:
 
 		Node();
 		Node(char c);
+		Node(Node &&rhs) = default;
+		Node &operator=(Node &&rhs) = default;
 		bool operator==(const Node &rhs) const;
 		Node &operator++(int);
-		bool operator<(const Node &rhs) const;
 	};
 
 public:
@@ -48,7 +49,7 @@ private:
 	 * @param frequencies The Node vector
 	 * @return NodePtr& The root of the tree
 	 */
-	static NodePtr &buildPrefixlessTree(NodeVector &frequencies);
+	static NodePtr buildPrefixlessTree(NodeVector &frequencies);
 
 	/**
 	 * @brief Convert a prefixless binary tree into a huffman mapping
@@ -60,6 +61,7 @@ private:
 
 public:
 	friend std::ostream &operator<<(std::ostream &os, const Node &);
+	friend NodePtr operator+(NodePtr &n1, NodePtr &n2);
 };
 
 #endif
