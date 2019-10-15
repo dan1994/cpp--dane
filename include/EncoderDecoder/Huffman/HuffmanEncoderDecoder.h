@@ -28,7 +28,7 @@ public:
 	using EncodedTypr = PaddedString;
 	using NodePtr = std::unique_ptr<Node>;
 	using NodeVector = std::vector<NodePtr>;
-	friend class HuffmanEncoderDecoder_getFrequencies_Test;
+	friend class HuffmanEncoderDecoder_makeEncodingFromTextSubRoutines_Test;
 
 private:
 	static const MappingType canonicalMapping;
