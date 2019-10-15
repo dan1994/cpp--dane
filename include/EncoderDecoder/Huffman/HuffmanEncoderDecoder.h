@@ -59,6 +59,17 @@ private:
 	 */
 	static MappingType createMapping(const NodePtr &root);
 
+	/**
+	 * @brief A helper function to createMapping. Walks recursively on a tree, building the code and
+	 * adding it to the mapping for each leaf node it encounters.
+	 *
+	 * @param mapping The mapping to populate
+	 * @param n The current node we are looking at
+	 * @param code The current code
+	 */
+	static void dfs(MappingType &mapping, const NodePtr &n,
+		std::pair<unsigned char, unsigned int> code);
+
 public:
 	friend std::ostream &operator<<(std::ostream &os, const Node &);
 	friend NodePtr operator+(NodePtr &n1, NodePtr &n2);

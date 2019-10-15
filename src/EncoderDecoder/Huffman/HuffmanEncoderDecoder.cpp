@@ -59,3 +59,50 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(NodeVe
 
 	return std::move(frequenciesList.front());
 }
+
+HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(const NodePtr &root) {
+	MappingType mapping;
+
+	// If the tree is empty, then so should the mapping be
+	if(root == nullptr) {
+		return mapping;
+	}
+
+	// If the tree has only one element, we want to assign it a single-bit 0 code
+	if(root->leftSon == nullptr && root->rightSon == nullptr) {
+		mapping.insert(root->character, std::make_pair<unsigned char, unsigned int>(1, 0));
+		return mapping;
+	}
+
+	// Otherwise we use dfs on the tree with an initial code of 0 length
+	HuffmanEncoderDecoder::dfs(mapping, root, std::make_pair<unsigned char, unsigned int>(0, 0));
+	return mapping;
+}
+
+void HuffmanEncoderDecoder::dfs(MappingType &mapping, const NodePtr &n,
+	std::pair<unsigned char, unsigned int> code) {
+
+	// We reached a leaf node, so we insert it to the mapping
+	if(n->leftSon == nullptr && n->rightSon == nullptr) {
+		mapping.insert(n->character, code);
+		return;
+	}
+
+	// If we have a left son, we concatenate a 0 to the code, and recurse
+	if(n->leftSon != nullptr) {
+		code.first++;
+		code.second *= 2;
+		dfs(mapping, n->leftSon, code);
+		code.first--;
+		code.second /= 2;
+	}
+
+	// If we have a left son, we concatenate a 1 to the code, and recurse
+	if(n->rightSon != nullptr) {
+		code.first++;
+		code.second = (2 * code.second) + 1;
+		dfs(mapping, n->rightSon, code);
+		code.first--;
+		code.second = (code.second - 1) / 2;
+	}
+}
