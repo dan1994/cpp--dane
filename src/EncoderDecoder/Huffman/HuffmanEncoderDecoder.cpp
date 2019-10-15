@@ -10,10 +10,9 @@ HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(const st
 	// Initialize frequencies
 	NodeVector frequencies;
 	frequencies.reserve(256);
-	std::generate(frequencies.begin(), frequencies.begin() + 256, []() {
-		static char c = 0;
-		return std::make_unique<Node>(Node(c++));
-	});
+	for(int c = 0; c < 256; c++) {
+		frequencies.push_back(std::make_unique<Node>(Node(c)));
+	}
 
 	// Count frequency of each char in plaintext
 	std::for_each(plaintext.cbegin(), plaintext.cend(), [&](auto c) {
