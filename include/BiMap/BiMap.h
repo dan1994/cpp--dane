@@ -7,7 +7,7 @@ template <typename T, typename U>
 class BiMap {
 private:
 	std::unordered_map<T, U> mapping;
-	std::unordered_map<T, U> reverseMapping;
+	std::unordered_map<U, T> reverseMapping;
 
 public:
 	const U &atT(const T &t) const;
