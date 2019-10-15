@@ -1,5 +1,10 @@
 # DanE
 
+
+[![CircleCI](https://circleci.com/gh/dan1994/cpp--dane.svg?style=svg)](https://circleci.com/gh/dan1994/cpp--dane)
+
+---
+
 DanE (Dan Encoder) is a `C++` training exercise with the purpose of writing a **generic** text encoder/decoder, with a specific implemnentation for Huffman coding.
 
 The goal of this exercise is to learn about:
