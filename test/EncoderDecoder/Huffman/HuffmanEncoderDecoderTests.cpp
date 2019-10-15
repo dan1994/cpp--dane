@@ -10,6 +10,7 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(frequencies['c']->frequency, 5);
 	EXPECT_EQ(frequencies[';']->frequency, 4);
 	EXPECT_EQ(frequencies['!']->frequency, 6);
+
 	auto tree = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
 	/*
 	           18
@@ -17,6 +18,7 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	  3     4      5      6
 	1   2
 	*/
+	ASSERT_NE(tree, nullptr) << "\nbuildPrefixlessTree returned a nullptr\n";
 	EXPECT_EQ(tree->frequency, 18);
 	EXPECT_EQ(tree->character, 0);
 	EXPECT_EQ(tree->leftSon->frequency, 7);
@@ -35,4 +37,11 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->leftSon->character, 'c');
 	EXPECT_EQ(tree->rightSon->rightSon->frequency, 6);
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
+
+	// auto mapping = HuffmanEncoderDecoder::createMapping(tree);
+	// EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
+	// EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
+	// EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
+	// EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
+	// EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
 }
