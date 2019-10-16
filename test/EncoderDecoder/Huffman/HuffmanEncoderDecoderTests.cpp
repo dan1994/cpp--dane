@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <numeric>
+#include "Pair/Hash.h"
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
 TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
@@ -38,10 +39,10 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->rightSon->frequency, 6);
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
 
-	// auto mapping = HuffmanEncoderDecoder::createMapping(tree);
-	// EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
-	// EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
-	// EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
-	// EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
-	// EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
+	auto mapping = HuffmanEncoderDecoder::createMapping(tree);
+	EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
+	EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
+	EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
+	EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
+	EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
 }
