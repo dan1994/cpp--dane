@@ -53,7 +53,7 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(NodeVe
 		auto newNode = n1 + n2;
 		// Insert it to the correct location in the list
 		auto newLoc = std::upper_bound(frequenciesList.begin(), frequenciesList.end(),
-			newNode->frequency, [](int frequency, NodePtr &n) { return n->frequency < frequency; });
+			newNode->frequency, [](int frequency, NodePtr &n) { return n->frequency > frequency; });
 		frequenciesList.insert(newLoc, std::move(newNode));
 	}
 
