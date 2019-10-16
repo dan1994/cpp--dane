@@ -1,6 +1,7 @@
 #include <numeric>
 #include <vector>
 #include <algorithm>
+#include "Pair/Hash.h"
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
 const HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::canonicalMapping;
