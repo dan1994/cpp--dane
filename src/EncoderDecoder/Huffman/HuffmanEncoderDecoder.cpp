@@ -111,7 +111,7 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encod
 	constexpr unsigned char BITS_IN_CHAR = 8;
 
 	// Get the correct encoding to use
-	const MappingType &mapping = this->getEncoding();
+	auto &mapping = this->getEncoding();
 
 	// Convert the characters into encoded symbols with the mapping
 	std::vector<std::pair<unsigned char, unsigned int>> encodedSymbols;
@@ -159,7 +159,49 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encod
 
 std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderDecoder::EncodedType
 	&encodedText) const {
-	return {true, ""};
+
+	constexpr unsigned char BITS_IN_CHAR = 8;
+
+	auto &mapping = this->getEncoding();
+	std::string plaintext;
+	auto charIt = encodedText.s.begin();
+	unsigned char offsetInChar = 1 << (BITS_IN_CHAR - 1);
+	unsigned char currentLength = 0;
+	unsigned int currentValue = 0;
+
+	// Go over all chars except the last
+	while(charIt != encodedText.s.end()) {
+		// Decoding error: The length of the current "guess" is larger than the max length
+		if(currentLength == 32) {
+			return {false, ""};
+		}
+
+		// Append a bit to the current value
+		currentValue = (currentValue << 1) | (*charIt | offsetInChar);
+		currentLength++;
+		offsetInChar >>= 1;
+
+		// Try adding the character corresponding to the current encoding
+		// If it doesn't exist, atU will throw an exception, and we'll try again next time
+		try {
+			plaintext += mapping.atU({currentLength, currentValue});
+			currentValue = 0;
+			currentLength = 0;
+		} catch(std::out_of_range) {}
+
+		// If we finished going over the current char, go to the next
+		if(offsetInChar == 0) {
+			charIt++;
+			offsetInChar = 1 << (BITS_IN_CHAR - 1);
+		}
+	}
+
+	// Decoding error: The length of the last pseudo-symbol should be identical to the padding
+	if(currentLength != encodedText.paddingSize) {
+		return {false, ""};
+	}
+
+	return {true, plaintext};
 }
 
 void HuffmanEncoderDecoder::useCanonicalEncoding() {
