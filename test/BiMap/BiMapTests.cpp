@@ -57,3 +57,29 @@ TEST(BiMap, ConflictInsertionU) {
 	ASSERT_TRUE(bm.insert(0, 0)) << "Failed to insert an element to an empty BiMap";
 	EXPECT_FALSE(bm.insert(1, 0)) << "Insert on a pair with an existing U was successful";
 }
+
+TEST(BiMap, CountNonExistingT) {
+	BiMap<int, int> bm;
+	EXPECT_EQ(bm.countT(0), 0) << "Count returns non-zero value for an element in an empty BiMap";
+	ASSERT_TRUE(bm.insert(0, 1)) << "Failed inserting to BiMap";
+	EXPECT_EQ(bm.countT(1), 0) << "Count returns non-zero value for an element not in the BiMap";
+}
+
+TEST(BiMap, CountNonExistingU) {
+	BiMap<int, int> bm;
+	EXPECT_EQ(bm.countU(0), 0) << "Count returns non-zero value for an element in an empty BiMap";
+	ASSERT_TRUE(bm.insert(1, 0)) << "Failed inserting to BiMap";
+	EXPECT_EQ(bm.countU(1), 0) << "Count returns non-zero value for an element not in the BiMap";
+}
+
+TEST(BiMap, CountExistingT) {
+	BiMap<int, int> bm;
+	ASSERT_TRUE(bm.insert(0, 1)) << "Failed inserting to BiMap";
+	EXPECT_EQ(bm.countT(0), 1) << "Count for existing value returns wrong value";
+}
+
+TEST(BiMap, CountExistingU) {
+	BiMap<int, int> bm;
+	ASSERT_TRUE(bm.insert(1, 0)) << "Failed inserting to BiMap";
+	EXPECT_EQ(bm.countU(0), 1) << "Count for existing value returns wrong value";
+}
