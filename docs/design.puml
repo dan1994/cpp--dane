@@ -2,6 +2,8 @@
 class BiMap<T,U> {
 	- {field}	mapping : std::unordered_map<T,U>
 	- {field}	reverseMapping : std::unordered_map<U,T>
+	+ {method}	countT(const T &t) const : typename std::unordered_map::size_type
+	+ {method}	countU(const U &u) const : typename std::unordered_map::size_type
 	+ {method}	atT(const T &t) const : const U &
 	+ {method}	atU(const U &u) const : const T &
 	+ {method}	insert(T t, U u) : bool
