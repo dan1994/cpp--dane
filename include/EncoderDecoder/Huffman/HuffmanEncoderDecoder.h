@@ -1,9 +1,14 @@
 #ifndef HUFFMAN_ENCODER_DECODER
 #define HUFFMAN_ENCODER_DECODER
 
+#include <numeric>
+#include <vector>
+#include <algorithm>
 #include <bits/stdc++.h>
+
 #include "EncoderDecoder/AbstractEncoderDecoder.h"
 #include "EncoderDecoder/Huffman/PaddedString.h"
+#include "Pair/Hash.h"
 #include "BiMap/BiMap.h"
 
 class HuffmanEncoderDecoder : public AbstractEncoderDecoder<
@@ -32,6 +37,7 @@ public:
 	friend class HuffmanEncoderDecoder_makeEncodingFromTextSubRoutines_Test;
 
 private:
+	static constexpr int MAX_ENCODED_BITS = 32;
 	static const MappingType canonicalMapping;
 
 	bool usingCanonicalEncoding;
@@ -75,6 +81,17 @@ private:
 		std::pair<unsigned char, unsigned int> code);
 
 public:
+
+	HuffmanEncoderDecoder();
+
+	// Inherited methods
+	std::pair<bool, EncodedType> encode(const std::string &plaintext) const;
+	std::pair<bool, std::string> decode(const EncodedType &encodedPlaintext) const;
+	void useCanonicalEncoding();
+	void makeEncodingFromText(const std::string &plaintext);
+	void setEncoding(MappingType mapping);
+	const MappingType &getEncoding() const;
+
 	friend std::ostream &operator<<(std::ostream &os, const Node &);
 	friend NodePtr operator+(NodePtr &n1, NodePtr &n2);
 };

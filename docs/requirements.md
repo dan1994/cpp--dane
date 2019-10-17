@@ -88,7 +88,7 @@ This section contains the encoded text itself. This section is present only if t
 ##### Field Description
 
 - `padding` is the amount of 'garbage' bits that are required to make `encoded_text` alligned to byte boundary
-- `encoded_text` is the encoded text with padding located at its start
+- `encoded_text` is the encoded text with padding located at its end
 
 ## CLI
 - `dane -h`

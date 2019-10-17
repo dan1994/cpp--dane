@@ -15,8 +15,9 @@ class PaddedString {
 }
 
 abstract class AbstractEncoderDecoder<MappingType, EncodedType> {
-	+ {method}	{abstract} encode(const std::string &plaintext) const : EncodedType
-	+ {method}	{abstract} decode(const EncodedType &encodedPlaintext) const : std::string
+	+ {method}	{abstract} encode(const std::string &plaintext) const : std::pair<bool, EncodedType>
+	+ {method}	{abstract} decode(const EncodedType &encodedText) const : \
+std::pair<bool, std::string>
 	+ {method}	{abstract} useCanonicalEncoding() : void
 	+ {method}	{abstract} makeEncodingFromText(const std::string &plaintext) : void
 	+ {method}	{abstract} setEncoding(MappingType &&mapping) : void

@@ -1,7 +1,3 @@
-#include <numeric>
-#include <vector>
-#include <algorithm>
-#include "Pair/Hash.h"
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
 const HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::canonicalMapping;
@@ -105,4 +101,83 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping, const NodePtr &n,
 		code.first--;
 		code.second = (code.second - 1) / 2;
 	}
+}
+
+HuffmanEncoderDecoder::HuffmanEncoderDecoder() : usingCanonicalEncoding(true) {}
+
+std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encode(
+	const std::string &plaintext) const {
+
+	constexpr unsigned char BITS_IN_CHAR = 8;
+
+	// Get the correct encoding to use
+	const MappingType &mapping = this->getEncoding();
+
+	// Convert the characters into encoded symbols with the mapping
+	std::vector<std::pair<unsigned char, unsigned int>> encodedSymbols;
+	try {
+		std::transform(plaintext.begin(), plaintext.end(), std::back_inserter(encodedSymbols),
+			[&mapping](auto c) { return std::pair(mapping.atT(c)); });
+	} catch(std::out_of_range) {
+		return {false, EncodedType()};
+	}
+
+	EncodedType encodedText;
+	unsigned char currentSize = 0;
+	char currentChar = 0;
+
+	for(auto [encodedSize, encodedValue] : encodedSymbols) {
+		while(encodedSize > 0) {
+			// We can each time insert the min of what is left of the current symbol and the space
+			// remaining in currentChar
+			auto sizeToInsert = std::min(encodedSize,
+				static_cast<unsigned char>(BITS_IN_CHAR - currentSize));
+			currentChar =
+				currentChar << sizeToInsert |
+				encodedValue >> (encodedSize - sizeToInsert);
+			currentSize += sizeToInsert;
+			encodedSize -= sizeToInsert;
+			// When the char is full, append it to the string and reset the state
+			if(currentSize == BITS_IN_CHAR) {
+				encodedText.s += currentChar;
+				currentChar = 0;
+				currentSize = 0;
+			}
+		}
+	}
+
+	// We may have leftovers so we calculate the padding encodedSize, add the padding and the last
+	// char
+	encodedText.paddingSize = (currentSize == 0) ? 0 : BITS_IN_CHAR - currentSize;
+	if(encodedText.paddingSize > 0) {
+		currentChar <<= encodedText.paddingSize;
+		encodedText.s += currentChar;
+	}
+
+	return {true, encodedText};
+}
+
+std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderDecoder::EncodedType
+	&encodedText) const {
+	return {true, ""};
+}
+
+void HuffmanEncoderDecoder::useCanonicalEncoding() {
+	this->usingCanonicalEncoding = true;
+}
+
+void HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
+	auto frequencies = HuffmanEncoderDecoder::getFrequencies(plaintext);
+	auto root = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
+	this->mapping = HuffmanEncoderDecoder::createMapping(root);
+	this->usingCanonicalEncoding = false;
+}
+
+void HuffmanEncoderDecoder::setEncoding(MappingType mapping) {
+	this->mapping = std::move(mapping);
+	this->usingCanonicalEncoding = false;
+}
+
+const HuffmanEncoderDecoder::MappingType &HuffmanEncoderDecoder::getEncoding() const {
+	return this->usingCanonicalEncoding ? HuffmanEncoderDecoder::canonicalMapping : this->mapping;
 }

@@ -5,7 +5,7 @@
 
 class PaddedString {
 public:
-	uint8_t padding_size;
+	uint8_t paddingSize;
 	std::string s;
 };
 

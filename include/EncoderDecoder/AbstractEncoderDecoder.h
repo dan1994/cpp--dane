@@ -3,24 +3,28 @@
 
 #include <string>
 
-template <typename MappingType, typename EncodeType>
+template <typename MappingType, typename EncodedType>
 class AbstractEncoderDecoder {
 public:
 	/**
 	 * @brief Encodes a given plaintext string.
 	 *
 	 * @param plaintext String to encode
-	 * @return EncodedType An object that represents the encoding of plaintext
+	 * @return std::pair<bool, EncodedType> A pair representing whether the encoding succeeded and
+	 * the result of the encoding operation. If the first value is false, the value of the second
+	 * is undefined.
 	 */
-	virtual EncodedType encode(const std::string &plaintext) const = 0;
+	virtual std::pair<bool, EncodedType> encode(const std::string &plaintext) const = 0;
 
 	/**
 	 * @brief Decodes an encoded input into a string
 	 *
 	 * @param encodedPlaintext An object of type EncodedType representing the encoded plaintext
-	 * @return std::string The decoded string
+	 * @return std::pair<bool, std::string> A pair representing whether the decoding succeeded and
+	 * the result of the decoding operation. If the first value is false, the value of the second
+	 * is undefined.
 	 */
-	virtual std::string decode(const EncodedType &encodedPlaintext) const = 0;
+	virtual std::pair<bool, std::string> decode(const EncodedType &encodedPlaintext) const = 0;
 
 	/**
 	 * @brief Sets the canonical encoding as the encoding to use for future encode/decode
@@ -42,14 +46,14 @@ public:
 	 *
 	 * @param mapping The encoding to use
 	 */
-	virtual void setEncoding(MappingType &&mapping) = 0;
+	virtual void setEncoding(MappingType mapping) = 0;
 
 	/**
 	 * @brief Get the currently used encoding
 	 *
 	 * @return const MappingType& The encoding
 	 */
-	virtual const MappingType &getEncoding() = 0;
+	virtual const MappingType &getEncoding() const = 0;
 };
 
 #endif
