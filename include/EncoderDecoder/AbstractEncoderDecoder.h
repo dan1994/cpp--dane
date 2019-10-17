@@ -3,15 +3,8 @@
 
 #include <string>
 
+template <typename MappingType, typename EncodeType>
 class AbstractEncoderDecoder {
-public:
-	using MappingType = void *;
-	using EncodedType = void *;
-
-protected:
-	bool usingCanonicalEncoding;
-	MappingType mapping;
-
 public:
 	/**
 	 * @brief Encodes a given plaintext string.

@@ -6,7 +6,8 @@
 #include "EncoderDecoder/Huffman/PaddedString.h"
 #include "BiMap/BiMap.h"
 
-class HuffmanEncoderDecoder : public AbstractEncoderDecoder {
+class HuffmanEncoderDecoder : public AbstractEncoderDecoder<
+	BiMap<char, std::pair<unsigned char, unsigned int>>, PaddedString> {
 private:
 	class Node {
 	public:
@@ -25,13 +26,16 @@ private:
 
 public:
 	using MappingType = BiMap<char, std::pair<unsigned char, unsigned int>>;
-	using EncodedTypr = PaddedString;
+	using EncodedType = PaddedString;
 	using NodePtr = std::unique_ptr<Node>;
 	using NodeVector = std::vector<NodePtr>;
 	friend class HuffmanEncoderDecoder_makeEncodingFromTextSubRoutines_Test;
 
 private:
 	static const MappingType canonicalMapping;
+
+	bool usingCanonicalEncoding;
+	MappingType mapping;
 
 	/**
 	 * @brief Calculate the frequency (number of occurences) of each character in a string

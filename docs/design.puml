@@ -14,13 +14,7 @@ class PaddedString {
 	+ {field}	s : std::string
 }
 
-abstract class AbstractEncoderDecoder {
-	using MappingType = void *
-	using EncodedType = void *
-	==
-	# {field}	usingCanonicalEncoding : bool
-	# {field}	mapping : MappingType
-	--
+abstract class AbstractEncoderDecoder<MappingType, EncodedType> {
 	+ {method}	{abstract} encode(const std::string &plaintext) const : EncodedType
 	+ {method}	{abstract} decode(const EncodedType &encodedPlaintext) const : std::string
 	+ {method}	{abstract} useCanonicalEncoding() : void
@@ -29,17 +23,19 @@ abstract class AbstractEncoderDecoder {
 	+ {method}	{abstract} getEncoding() const : const MappingType &
 }
 
-AbstractEncoderDecoder <|-- HuffmanEncoderDecoder
+AbstractEncoderDecoder <|-- HuffmanEncoderDecoder : \
+MappingType = BiMap<char, std::pair<unsigned char, unsigned int>>\n\
+EncodedType = PaddedString
 HuffmanEncoderDecoder *-- BiMap
 HuffmanEncoderDecoder *-- PaddedString
 HuffmanEncoderDecoder +-- Node : "Private Nested"
 class HuffmanEncoderDecoder {
-	using MappingType = BiMap<char, std::pair<unsigned char, unsigned int>>
-	using EncodedType = PaddedString
 	using NodePtr = std::unique_ptr<Node>
 	using NodeVector = std::vector<NodePtr>
 	==
 	- {field}	{static} canonicalMapping : const MappingType
+	- {field}	usingCanonicalEncoding : bool
+	- {field}	mapping : MappingType
 	--
 	- {method}	{static} getFrequencies(const std::string &plaintext) : NodeVector
 	- {method}	{static} buildPrefixlessTree(NodeVector &frequencies) : NodePtr
