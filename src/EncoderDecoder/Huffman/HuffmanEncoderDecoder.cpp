@@ -165,21 +165,22 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderD
 	auto &mapping = this->getEncoding();
 	std::string plaintext;
 	auto charIt = encodedText.s.begin();
-	unsigned char offsetInChar = 1 << (BITS_IN_CHAR - 1);
+	unsigned char offsetInChar = BITS_IN_CHAR;
 	unsigned char currentLength = 0;
 	unsigned int currentValue = 0;
 
-	// Go over all chars except the last
-	while(charIt != encodedText.s.end()) {
+	// Go over all chars
+	auto lastCharIt = --encodedText.s.end();
+	while(charIt != lastCharIt || offsetInChar > encodedText.paddingSize) {
 		// Decoding error: The length of the current "guess" is larger than the max length
 		if(currentLength == 32) {
 			return {false, ""};
 		}
 
 		// Append a bit to the current value
-		currentValue = (currentValue << 1) | (*charIt | offsetInChar);
+		offsetInChar--;
+		currentValue = (currentValue << 1) | ((*charIt >> offsetInChar) & 1);
 		currentLength++;
-		offsetInChar >>= 1;
 
 		// Try adding the character corresponding to the current encoding
 		// If it doesn't exist, atU will throw an exception, and we'll try again next time
@@ -192,12 +193,12 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderD
 		// If we finished going over the current char, go to the next
 		if(offsetInChar == 0) {
 			charIt++;
-			offsetInChar = 1 << (BITS_IN_CHAR - 1);
+			offsetInChar = BITS_IN_CHAR;
 		}
 	}
 
-	// Decoding error: The length of the last pseudo-symbol should be identical to the padding
-	if(currentLength != encodedText.paddingSize) {
+	// Decoding error: Reached padding in the middle of symbol
+	if(currentLength != 0) {
 		return {false, ""};
 	}
 

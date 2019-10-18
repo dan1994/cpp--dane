@@ -1,6 +1,4 @@
 #include <gtest/gtest.h>
-#include <numeric>
-#include "Pair/Hash.h"
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
 TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
@@ -45,4 +43,73 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
 	EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
 	EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
+}
+
+TEST(HuffmanEncoderDecoder, SetEncoding) {
+	HuffmanEncoderDecoder hed;
+	HuffmanEncoderDecoder::MappingType m;
+	m.insert('a', std::make_pair(1, 0));
+	m.insert('b', std::make_pair(1, 1));
+	hed.setEncoding(m);
+	auto &m2 = hed.getEncoding();
+	EXPECT_EQ(m2.atT('a'), m.atT('a'));
+	EXPECT_EQ(m2.atT('b'), m.atT('b'));
+}
+
+TEST(HuffmanEncoderDecoder, IdentityEncoding) {
+	HuffmanEncoderDecoder hed;
+	HuffmanEncoderDecoder::MappingType m;
+	ASSERT_TRUE(m.insert('a', std::make_pair(8, 'a')));
+	ASSERT_TRUE(m.insert('b', std::make_pair(8, 'b')));
+	ASSERT_TRUE(m.insert('c', std::make_pair(8, 'c')));
+	hed.setEncoding(m);
+	std::string s = "aabcbbc";
+	auto [success, encodedText] = hed.encode(s);
+	ASSERT_TRUE(success) << "Failed encoding";
+	EXPECT_EQ(encodedText.s, s);
+}
+
+TEST(HuffmanEncoderDecoder, Plus1Encoding) {
+	HuffmanEncoderDecoder hed;
+	HuffmanEncoderDecoder::MappingType m;
+	ASSERT_TRUE(m.insert('a', std::make_pair(8, 'b')));
+	ASSERT_TRUE(m.insert('b', std::make_pair(8, 'c')));
+	ASSERT_TRUE(m.insert('c', std::make_pair(8, 'd')));
+	hed.setEncoding(m);
+	std::string s = "aabcbbc";
+	std::string encodedS;
+	std::transform(s.begin(), s.end(), std::back_inserter(encodedS), [](char c) { return ++c; });
+	auto [success, encodedText] = hed.encode(s);
+	ASSERT_TRUE(success) << "Failed encoding";
+	EXPECT_EQ(encodedText.s, encodedS);
+}
+
+TEST(HuffmanEncoderDecoder, ActualEncoding) {
+	HuffmanEncoderDecoder hed;
+	HuffmanEncoderDecoder::MappingType m;
+	ASSERT_TRUE(m.insert('a', std::make_pair(1, 0)));
+	ASSERT_TRUE(m.insert('b', std::make_pair(2, 2)));
+	ASSERT_TRUE(m.insert('c', std::make_pair(2, 3)));
+	hed.setEncoding(m);
+	std::string s = "aabcbbc";
+	// 00101110 1011
+	unsigned char encodedS[3] = {46, 176, 0};
+	auto [success, encodedText] = hed.encode(s);
+	ASSERT_TRUE(success) << "Failed encoding";
+	EXPECT_EQ(encodedText.s, std::string(reinterpret_cast<char *>(encodedS)));
+}
+
+TEST(HuffmanEncoderDecoder, EncodeDecode) {
+	HuffmanEncoderDecoder hed;
+	HuffmanEncoderDecoder::MappingType m;
+	ASSERT_TRUE(m.insert('a', std::make_pair(1, 0)));
+	ASSERT_TRUE(m.insert('b', std::make_pair(2, 2)));
+	ASSERT_TRUE(m.insert('c', std::make_pair(2, 3)));
+	hed.setEncoding(m);
+	std::string s = "aabcbbc";
+	auto [success, encodedText] = hed.encode(s);
+	ASSERT_TRUE(success) << "Failed encoding";
+	auto [success2, plaintext] = hed.decode(encodedText);
+	ASSERT_TRUE(success2) << "Failed decoding";
+	ASSERT_EQ(plaintext, s) << "decode(encode(s)) != s";
 }
