@@ -182,6 +182,12 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderD
 		currentValue = (currentValue << 1) | ((*charIt >> offsetInChar) & 1);
 		currentLength++;
 
+		// If we finished going over the current char, go to the next
+		if(offsetInChar == 0) {
+			charIt++;
+			offsetInChar = BITS_IN_CHAR;
+		}
+
 		// Try adding the character corresponding to the current encoding
 		// If it doesn't exist, atU will throw an exception, and we'll try again next time
 		try {
@@ -189,12 +195,6 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderD
 			currentValue = 0;
 			currentLength = 0;
 		} catch(std::out_of_range) {}
-
-		// If we finished going over the current char, go to the next
-		if(offsetInChar == 0) {
-			charIt++;
-			offsetInChar = BITS_IN_CHAR;
-		}
 	}
 
 	// Decoding error: Reached padding in the middle of symbol
