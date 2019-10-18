@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <random>
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
 TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
@@ -38,6 +39,18 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
 
 	auto mapping = HuffmanEncoderDecoder::createMapping(tree);
+	EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
+	EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
+	EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
+	EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
+	EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
+}
+
+TEST(HuffmanEncoderDecoder, makeEncodingFromText) {
+	std::string s = "abca;;;c;c!c!c!!!!";
+	HuffmanEncoderDecoder hed;
+	hed.makeEncodingFromText(s);
+	auto &mapping = hed.getEncoding();
 	EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
 	EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
 	EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
@@ -111,5 +124,22 @@ TEST(HuffmanEncoderDecoder, EncodeDecode) {
 	ASSERT_TRUE(success) << "Failed encoding";
 	auto [success2, plaintext] = hed.decode(encodedText);
 	ASSERT_TRUE(success2) << "Failed decoding";
-	ASSERT_EQ(plaintext, s) << "decode(encode(s)) != s";
+	EXPECT_EQ(plaintext, s) << "decode(encode(s)) != s";
+}
+
+TEST(HuffmanEncoderDecoder, EncodeDecodeRandomString) {
+	HuffmanEncoderDecoder hed;
+	std::string s = "";
+	std::random_device rd;
+	std::mt19937 mt(rd());
+	std::uniform_int_distribution<unsigned char> dist(0, 255);
+	for(int i = 0; i < 10000; i++) {
+		s += dist(mt);
+	}
+	hed.makeEncodingFromText(s);
+	auto [success, encodedText] = hed.encode(s);
+	ASSERT_TRUE(success) << "Failed encoding";
+	auto [success2, plaintext] = hed.decode(encodedText);
+	ASSERT_TRUE(success2) << "Failed decoding";
+	EXPECT_EQ(plaintext, s) << "decode(encode(s)) != s";
 }

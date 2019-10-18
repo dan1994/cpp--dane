@@ -12,7 +12,7 @@ HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(const st
 	}
 
 	// Count frequency of each char in plaintext
-	std::for_each(plaintext.cbegin(), plaintext.cend(), [&](auto c) {
+	std::for_each(plaintext.cbegin(), plaintext.cend(), [&](unsigned char c) {
 		auto &fp = frequencies[c];
 		(*fp)++;
 	});
