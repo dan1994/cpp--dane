@@ -1,18 +1,20 @@
 #ifndef HUFFMAN_ENCODER_DECODER
 #define HUFFMAN_ENCODER_DECODER
 
-#include <numeric>
-#include <vector>
-#include <algorithm>
-#include <bits/stdc++.h>
-
+#include "BiMap/BiMap.h"
 #include "EncoderDecoder/AbstractEncoderDecoder.h"
 #include "EncoderDecoder/Huffman/PaddedString.h"
 #include "Pair/Hash.h"
-#include "BiMap/BiMap.h"
 
-class HuffmanEncoderDecoder : public AbstractEncoderDecoder<
-	BiMap<char, std::pair<unsigned char, unsigned int>>, PaddedString> {
+#include <algorithm>
+#include <bits/stdc++.h>
+#include <numeric>
+#include <vector>
+
+class HuffmanEncoderDecoder
+	: public AbstractEncoderDecoder<
+		  BiMap<char, std::pair<unsigned char, unsigned int>>,
+		  PaddedString> {
 private:
 	class Node {
 	public:
@@ -44,17 +46,18 @@ private:
 	MappingType mapping;
 
 	/**
-	 * @brief Calculate the frequency (number of occurences) of each character in a string
+	 * @brief Calculate the frequency (number of occurences) of each character
+	 * in a string
 	 *
 	 * @param plaintext The input string
-	 * @return NodeVector A vector with exactly 256 elements (1 per char value) that
-	 * contains Nodes with the corresponding chars and their frequencies
+	 * @return NodeVector A vector with exactly 256 elements (1 per char value)
+	 * that contains Nodes with the corresponding chars and their frequencies
 	 */
 	static NodeVector getFrequencies(const std::string &plaintext);
 
 	/**
-	 * @brief Create a prefixless binary tree of Nodes given a vector with the corresponding
-	 * frequencies for each character
+	 * @brief Create a prefixless binary tree of Nodes given a vector with the
+	 * corresponding frequencies for each character
 	 *
 	 * @param frequencies The Node vector
 	 * @return NodePtr& The root of the tree
@@ -70,23 +73,25 @@ private:
 	static MappingType createMapping(const NodePtr &root);
 
 	/**
-	 * @brief A helper function to createMapping. Walks recursively on a tree, building the code and
-	 * adding it to the mapping for each leaf node it encounters.
+	 * @brief A helper function to createMapping. Walks recursively on a tree,
+	 * building the code and adding it to the mapping for each leaf node it
+	 * encounters.
 	 *
 	 * @param mapping The mapping to populate
 	 * @param n The current node we are looking at
 	 * @param code The current code
 	 */
-	static void dfs(MappingType &mapping, const NodePtr &n,
+	static void dfs(MappingType &mapping,
+		const NodePtr &n,
 		std::pair<unsigned char, unsigned int> code);
 
 public:
-
 	HuffmanEncoderDecoder();
 
 	// Inherited methods
 	std::pair<bool, EncodedType> encode(const std::string &plaintext) const;
-	std::pair<bool, std::string> decode(const EncodedType &encodedPlaintext) const;
+	std::pair<bool, std::string> decode(
+		const EncodedType &encodedPlaintext) const;
 	void useCanonicalEncoding();
 	void makeEncodingFromText(const std::string &plaintext);
 	void setEncoding(MappingType mapping);

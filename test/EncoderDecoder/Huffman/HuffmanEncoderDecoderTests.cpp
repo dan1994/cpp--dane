@@ -1,6 +1,7 @@
+#include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
+
 #include <gtest/gtest.h>
 #include <random>
-#include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
 TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	std::string s = "abca;;;c;c!c!c!!!!";
@@ -13,8 +14,8 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 
 	auto tree = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
 	/*
-	           18
-	     7            11
+			   18
+		 7            11
 	  3     4      5      6
 	1   2
 	*/
@@ -39,11 +40,16 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
 
 	auto mapping = HuffmanEncoderDecoder::createMapping(tree);
-	EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
-	EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
-	EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
-	EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
-	EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
+	EXPECT_EQ(
+		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
+	EXPECT_EQ(
+		mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
+	EXPECT_EQ(
+		mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
+	EXPECT_EQ(
+		mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
+	EXPECT_EQ(
+		mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
 }
 
 TEST(HuffmanEncoderDecoder, makeEncodingFromText) {
@@ -51,11 +57,16 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromText) {
 	HuffmanEncoderDecoder hed;
 	hed.makeEncodingFromText(s);
 	auto &mapping = hed.getEncoding();
-	EXPECT_EQ(mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
-	EXPECT_EQ(mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
-	EXPECT_EQ(mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
-	EXPECT_EQ(mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
-	EXPECT_EQ(mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
+	EXPECT_EQ(
+		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
+	EXPECT_EQ(
+		mapping.atT('a'), (std::make_pair<unsigned char, unsigned int>(3, 1)));
+	EXPECT_EQ(
+		mapping.atT(';'), (std::make_pair<unsigned char, unsigned int>(2, 1)));
+	EXPECT_EQ(
+		mapping.atT('c'), (std::make_pair<unsigned char, unsigned int>(2, 2)));
+	EXPECT_EQ(
+		mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
 }
 
 TEST(HuffmanEncoderDecoder, SetEncoding) {
@@ -91,7 +102,10 @@ TEST(HuffmanEncoderDecoder, Plus1Encoding) {
 	hed.setEncoding(m);
 	std::string s = "aabcbbc";
 	std::string encodedS;
-	std::transform(s.begin(), s.end(), std::back_inserter(encodedS), [](char c) { return ++c; });
+	std::transform(
+		s.begin(), s.end(), std::back_inserter(encodedS), [](char c) {
+			return ++c;
+		});
 	auto [success, encodedText] = hed.encode(s);
 	ASSERT_TRUE(success) << "Failed encoding";
 	EXPECT_EQ(encodedText.s, encodedS);

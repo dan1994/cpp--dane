@@ -1,8 +1,10 @@
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
-const HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::canonicalMapping;
+const HuffmanEncoderDecoder::MappingType
+	HuffmanEncoderDecoder::canonicalMapping;
 
-HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(const std::string &plaintext) {
+HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(
+	const std::string &plaintext) {
 
 	// Initialize frequencies
 	NodeVector frequencies;
@@ -20,19 +22,26 @@ HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(const st
 	return frequencies;
 }
 
-HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(NodeVector &frequencies) {
+HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(
+	NodeVector &frequencies) {
 
 	// Sort by ascending order of frequency
-	std::sort(frequencies.begin(), frequencies.end(), [](const NodePtr &n1, const NodePtr &n2)
-		{ return n1->frequency < n2->frequency; });
+	std::sort(frequencies.begin(),
+		frequencies.end(),
+		[](const NodePtr &n1, const NodePtr &n2) {
+			return n1->frequency < n2->frequency;
+		});
 
 	// Find the first element with non-zero frequency
-	auto activeSymbols = std::upper_bound(frequencies.begin(), frequencies.end(), 0,
-		[](int value, NodePtr &n) { return n->frequency > value; });
+	auto activeSymbols = std::upper_bound(
+		frequencies.begin(), frequencies.end(), 0, [](int value, NodePtr &n) {
+			return n->frequency > value;
+		});
 
 	// Copy to list non-zero frequency elements
 	std::list<NodePtr> frequenciesList;
-	std::copy(std::make_move_iterator(activeSymbols), std::make_move_iterator(frequencies.end()),
+	std::copy(std::make_move_iterator(activeSymbols),
+		std::make_move_iterator(frequencies.end()),
 		std::back_inserter(frequenciesList));
 
 	// If there are no elements, return an empty node
@@ -43,20 +52,25 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(NodeVe
 	// While there is more than one element in the list
 	while(frequenciesList.size() > 1) {
 		// Pop first 2 elements
-		auto n1 = std::move(frequenciesList.front()); frequenciesList.pop_front();
-		auto n2 = std::move(frequenciesList.front()); frequenciesList.pop_front();
+		auto n1 = std::move(frequenciesList.front());
+		frequenciesList.pop_front();
+		auto n2 = std::move(frequenciesList.front());
+		frequenciesList.pop_front();
 		// Create a new one which is their sum
 		auto newNode = n1 + n2;
 		// Insert it to the correct location in the list
-		auto newLoc = std::upper_bound(frequenciesList.begin(), frequenciesList.end(),
-			newNode->frequency, [](int frequency, NodePtr &n) { return n->frequency > frequency; });
+		auto newLoc = std::upper_bound(frequenciesList.begin(),
+			frequenciesList.end(),
+			newNode->frequency,
+			[](int frequency, NodePtr &n) { return n->frequency > frequency; });
 		frequenciesList.insert(newLoc, std::move(newNode));
 	}
 
 	return std::move(frequenciesList.front());
 }
 
-HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(const NodePtr &root) {
+HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(
+	const NodePtr &root) {
 	MappingType mapping;
 
 	// If the tree is empty, then so should the mapping be
@@ -64,18 +78,22 @@ HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(const No
 		return mapping;
 	}
 
-	// If the tree has only one element, we want to assign it a single-bit 0 code
+	// If the tree has only one element, we want to assign it a single-bit 0
+	// code
 	if(root->leftSon == nullptr && root->rightSon == nullptr) {
-		mapping.insert(root->character, std::make_pair<unsigned char, unsigned int>(1, 0));
+		mapping.insert(
+			root->character, std::make_pair<unsigned char, unsigned int>(1, 0));
 		return mapping;
 	}
 
 	// Otherwise we use dfs on the tree with an initial code of 0 length
-	HuffmanEncoderDecoder::dfs(mapping, root, std::make_pair<unsigned char, unsigned int>(0, 0));
+	HuffmanEncoderDecoder::dfs(
+		mapping, root, std::make_pair<unsigned char, unsigned int>(0, 0));
 	return mapping;
 }
 
-void HuffmanEncoderDecoder::dfs(MappingType &mapping, const NodePtr &n,
+void HuffmanEncoderDecoder::dfs(MappingType &mapping,
+	const NodePtr &n,
 	std::pair<unsigned char, unsigned int> code) {
 
 	// We reached a leaf node, so we insert it to the mapping
@@ -105,8 +123,8 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping, const NodePtr &n,
 
 HuffmanEncoderDecoder::HuffmanEncoderDecoder() : usingCanonicalEncoding(true) {}
 
-std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encode(
-	const std::string &plaintext) const {
+std::pair<bool, HuffmanEncoderDecoder::EncodedType>
+	HuffmanEncoderDecoder::encode(const std::string &plaintext) const {
 
 	constexpr unsigned char BITS_IN_CHAR = 8;
 
@@ -116,11 +134,11 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encod
 	// Convert the characters into encoded symbols with the mapping
 	std::vector<std::pair<unsigned char, unsigned int>> encodedSymbols;
 	try {
-		std::transform(plaintext.begin(), plaintext.end(), std::back_inserter(encodedSymbols),
+		std::transform(plaintext.begin(),
+			plaintext.end(),
+			std::back_inserter(encodedSymbols),
 			[&mapping](auto c) { return std::pair(mapping.atT(c)); });
-	} catch(std::out_of_range) {
-		return {false, EncodedType()};
-	}
+	} catch(std::out_of_range) { return {false, EncodedType()}; }
 
 	EncodedType encodedText;
 	unsigned char currentSize = 0;
@@ -128,16 +146,16 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encod
 
 	for(auto [encodedSize, encodedValue] : encodedSymbols) {
 		while(encodedSize > 0) {
-			// We can each time insert the min of what is left of the current symbol and the space
-			// remaining in currentChar
+			// We can each time insert the min of what is left of the current
+			// symbol and the space remaining in currentChar
 			auto sizeToInsert = std::min(encodedSize,
 				static_cast<unsigned char>(BITS_IN_CHAR - currentSize));
-			currentChar =
-				currentChar << sizeToInsert |
+			currentChar = currentChar << sizeToInsert |
 				encodedValue >> (encodedSize - sizeToInsert);
 			currentSize += sizeToInsert;
 			encodedSize -= sizeToInsert;
-			// When the char is full, append it to the string and reset the state
+			// When the char is full, append it to the string and reset the
+			// state
 			if(currentSize == BITS_IN_CHAR) {
 				encodedText.s += currentChar;
 				currentChar = 0;
@@ -146,9 +164,10 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encod
 		}
 	}
 
-	// We may have leftovers so we calculate the padding encodedSize, add the padding and the last
-	// char
-	encodedText.paddingSize = (currentSize == 0) ? 0 : BITS_IN_CHAR - currentSize;
+	// We may have leftovers so we calculate the padding encodedSize, add the
+	// padding and the last char
+	encodedText.paddingSize =
+		(currentSize == 0) ? 0 : BITS_IN_CHAR - currentSize;
 	if(encodedText.paddingSize > 0) {
 		currentChar <<= encodedText.paddingSize;
 		encodedText.s += currentChar;
@@ -157,8 +176,8 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType> HuffmanEncoderDecoder::encod
 	return {true, encodedText};
 }
 
-std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderDecoder::EncodedType
-	&encodedText) const {
+std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
+	const HuffmanEncoderDecoder::EncodedType &encodedText) const {
 
 	constexpr unsigned char BITS_IN_CHAR = 8;
 
@@ -172,7 +191,8 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderD
 	// Go over all chars
 	auto lastCharIt = --encodedText.s.end();
 	while(charIt != lastCharIt || offsetInChar > encodedText.paddingSize) {
-		// Decoding error: The length of the current "guess" is larger than the max length
+		// Decoding error: The length of the current "guess" is larger than the
+		// max length
 		if(currentLength == 32) {
 			return {false, ""};
 		}
@@ -189,7 +209,8 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(const HuffmanEncoderD
 		}
 
 		// Try adding the character corresponding to the current encoding
-		// If it doesn't exist, atU will throw an exception, and we'll try again next time
+		// If it doesn't exist, atU will throw an exception, and we'll try again
+		// next time
 		try {
 			plaintext += mapping.atU({currentLength, currentValue});
 			currentValue = 0;
@@ -221,6 +242,9 @@ void HuffmanEncoderDecoder::setEncoding(MappingType mapping) {
 	this->usingCanonicalEncoding = false;
 }
 
-const HuffmanEncoderDecoder::MappingType &HuffmanEncoderDecoder::getEncoding() const {
-	return this->usingCanonicalEncoding ? HuffmanEncoderDecoder::canonicalMapping : this->mapping;
+const HuffmanEncoderDecoder::MappingType &
+	HuffmanEncoderDecoder::getEncoding() const {
+	return this->usingCanonicalEncoding ?
+		HuffmanEncoderDecoder::canonicalMapping :
+		this->mapping;
 }
