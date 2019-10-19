@@ -1,12 +1,14 @@
 #include "BiMap.h"
 
 template <typename T, typename U>
-typename std::unordered_map<T, U>::size_type BiMap<T, U>::countT(const T &t) const {
+typename std::unordered_map<T, U>::size_type BiMap<T, U>::countT(
+	const T &t) const {
 	return this->mapping.count(t);
 }
 
 template <typename T, typename U>
-typename std::unordered_map<U, T>::size_type BiMap<T, U>::countU(const U &u) const {
+typename std::unordered_map<U, T>::size_type BiMap<T, U>::countU(
+	const U &u) const {
 	return this->reverseMapping.count(u);
 }
 
