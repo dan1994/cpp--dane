@@ -69,13 +69,13 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(
 	return std::move(frequenciesList.front());
 }
 
-HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(
-	const NodePtr &root) {
+std::pair<bool, HuffmanEncoderDecoder::MappingType>
+	HuffmanEncoderDecoder::createMapping(const NodePtr &root) {
 	MappingType mapping;
 
 	// If the tree is empty, then so should the mapping be
 	if(root == nullptr) {
-		return mapping;
+		return {false, mapping};
 	}
 
 	// If the tree has only one element, we want to assign it a single-bit 0
@@ -83,18 +83,24 @@ HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(
 	if(root->leftSon == nullptr && root->rightSon == nullptr) {
 		mapping.insert(
 			root->character, std::make_pair<unsigned char, unsigned int>(1, 0));
-		return mapping;
+		return {true, mapping};
 	}
 
 	// Otherwise we use dfs on the tree with an initial code of 0 length
-	HuffmanEncoderDecoder::dfs(
-		mapping, root, std::make_pair<unsigned char, unsigned int>(0, 0));
-	return mapping;
+	try {
+		HuffmanEncoderDecoder::dfs(mapping,
+			root,
+			std::make_pair<unsigned char, unsigned int>(0, 0),
+			32);
+	} catch(std::length_error) { return {false, mapping}; }
+
+	return {true, mapping};
 }
 
 void HuffmanEncoderDecoder::dfs(MappingType &mapping,
 	const NodePtr &n,
-	std::pair<unsigned char, unsigned int> code) {
+	std::pair<unsigned char, unsigned int> code,
+	int depth) {
 
 	// We reached a leaf node, so we insert it to the mapping
 	if(n->leftSon == nullptr && n->rightSon == nullptr) {
@@ -102,11 +108,18 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping,
 		return;
 	}
 
+	// If depth is 0, than we won't have enough space to represent certain
+	// characters
+	if(depth == 0) {
+		throw std::length_error(
+			"The tree depth is more than the max representation length");
+	}
+
 	// If we have a left son, we concatenate a 0 to the code, and recurse
 	if(n->leftSon != nullptr) {
 		code.first++;
 		code.second *= 2;
-		dfs(mapping, n->leftSon, code);
+		dfs(mapping, n->leftSon, code, depth - 1);
 		code.first--;
 		code.second /= 2;
 	}
@@ -115,7 +128,7 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping,
 	if(n->rightSon != nullptr) {
 		code.first++;
 		code.second = (2 * code.second) + 1;
-		dfs(mapping, n->rightSon, code);
+		dfs(mapping, n->rightSon, code, depth - 1);
 		code.first--;
 		code.second = (code.second - 1) / 2;
 	}
@@ -230,11 +243,15 @@ void HuffmanEncoderDecoder::useCanonicalEncoding() {
 	this->usingCanonicalEncoding = true;
 }
 
-void HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
+bool HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
 	auto frequencies = HuffmanEncoderDecoder::getFrequencies(plaintext);
 	auto root = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
-	this->mapping = HuffmanEncoderDecoder::createMapping(root);
-	this->usingCanonicalEncoding = false;
+	auto [success, mapping] = HuffmanEncoderDecoder::createMapping(root);
+	if(success) {
+		this->mapping = mapping;
+		this->usingCanonicalEncoding = false;
+	}
+	return success;
 }
 
 void HuffmanEncoderDecoder::setEncoding(MappingType mapping) {

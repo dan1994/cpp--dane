@@ -41,8 +41,10 @@ public:
 	 * as the encoding to use for future encode/decode operations
 	 *
 	 * @param plaintext The text to extract the encoding from
+	 * @return true If the encoding was successfuly created
+	 * @return false If failed in creating the encoding
 	 */
-	virtual void makeEncodingFromText(const std::string &plaintext) = 0;
+	virtual bool makeEncodingFromText(const std::string &plaintext) = 0;
 
 	/**
 	 * @brief Sets the encoding to use to the given encoding

@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <random>
 
-TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
+TEST(HuffmanEncoderDecoder, MakeEncodingFromTextSubRoutines) {
 	std::string s = "abca;;;c;c!c!c!!!!";
 	auto frequencies = HuffmanEncoderDecoder::getFrequencies(s);
 	EXPECT_EQ(frequencies['a']->frequency, 2);
@@ -39,7 +39,8 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->rightSon->frequency, 6);
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
 
-	auto mapping = HuffmanEncoderDecoder::createMapping(tree);
+	auto [success, mapping] = HuffmanEncoderDecoder::createMapping(tree);
+	ASSERT_TRUE(success) << "Failed in creating a mapping";
 	EXPECT_EQ(
 		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
 	EXPECT_EQ(
@@ -52,10 +53,11 @@ TEST(HuffmanEncoderDecoder, makeEncodingFromTextSubRoutines) {
 		mapping.atT('!'), (std::make_pair<unsigned char, unsigned int>(2, 3)));
 }
 
-TEST(HuffmanEncoderDecoder, makeEncodingFromText) {
+TEST(HuffmanEncoderDecoder, MakeEncodingFromText) {
 	std::string s = "abca;;;c;c!c!c!!!!";
 	HuffmanEncoderDecoder hed;
-	hed.makeEncodingFromText(s);
+	ASSERT_TRUE(hed.makeEncodingFromText(s))
+		<< "Failed in creating the encoding";
 	auto &mapping = hed.getEncoding();
 	EXPECT_EQ(
 		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
@@ -150,7 +152,8 @@ TEST(HuffmanEncoderDecoder, EncodeDecodeRandomString) {
 	for(int i = 0; i < 10000; i++) {
 		s += dist(mt);
 	}
-	hed.makeEncodingFromText(s);
+	ASSERT_TRUE(hed.makeEncodingFromText(s))
+		<< "Failed in creating the encoding";
 	auto [success, encodedText] = hed.encode(s);
 	ASSERT_TRUE(success) << "Failed encoding";
 	auto [success2, plaintext] = hed.decode(encodedText);

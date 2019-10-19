@@ -36,7 +36,7 @@ public:
 	using EncodedType = PaddedString;
 	using NodePtr = std::unique_ptr<Node>;
 	using NodeVector = std::vector<NodePtr>;
-	friend class HuffmanEncoderDecoder_makeEncodingFromTextSubRoutines_Test;
+	friend class HuffmanEncoderDecoder_MakeEncodingFromTextSubRoutines_Test;
 
 private:
 	static constexpr int MAX_ENCODED_BITS = 32;
@@ -68,9 +68,10 @@ private:
 	 * @brief Convert a prefixless binary tree into a huffman mapping
 	 *
 	 * @param root The root of the tree
-	 * @return MappingType The huffman mapping
+	 * @return std::pair<bool, MappingType> A pair indicating success of the
+	 * operation and the huffman mapping
 	 */
-	static MappingType createMapping(const NodePtr &root);
+	static std::pair<bool, MappingType> createMapping(const NodePtr &root);
 
 	/**
 	 * @brief A helper function to createMapping. Walks recursively on a tree,
@@ -83,7 +84,8 @@ private:
 	 */
 	static void dfs(MappingType &mapping,
 		const NodePtr &n,
-		std::pair<unsigned char, unsigned int> code);
+		std::pair<unsigned char, unsigned int> code,
+		int depth);
 
 public:
 	HuffmanEncoderDecoder();
@@ -93,7 +95,7 @@ public:
 	std::pair<bool, std::string> decode(
 		const EncodedType &encodedPlaintext) const;
 	void useCanonicalEncoding();
-	void makeEncodingFromText(const std::string &plaintext);
+	bool makeEncodingFromText(const std::string &plaintext);
 	void setEncoding(MappingType mapping);
 	const MappingType &getEncoding() const;
 
