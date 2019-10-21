@@ -90,7 +90,7 @@ std::pair<bool, HuffmanEncoderDecoder::MappingType>
 			root,
 			std::make_pair<unsigned char, unsigned int>(0, 0),
 			std::numeric_limits<unsigned int>::digits);
-	} catch(std::length_error) { return {false, mapping}; }
+	} catch(std::length_error &) { return {false, mapping}; }
 
 	return {true, mapping};
 }
@@ -145,7 +145,7 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType>
 			plaintext.end(),
 			std::back_inserter(encodedSymbols),
 			[&m = this->mapping](auto c) { return std::pair(m.atT(c)); });
-	} catch(std::out_of_range) { return {false, EncodedType()}; }
+	} catch(std::out_of_range &) { return {false, EncodedType()}; }
 
 	EncodedType encodedText;
 	unsigned char currentSize = 0;
@@ -222,7 +222,7 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 			plaintext += this->mapping.atU({currentLength, currentValue});
 			currentValue = 0;
 			currentLength = 0;
-		} catch(std::out_of_range) {}
+		} catch(std::out_of_range &) {}
 	}
 
 	// Decoding error: Reached padding in the middle of symbol

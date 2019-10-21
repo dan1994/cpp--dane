@@ -8,7 +8,7 @@ TEST(BiMap, AccessNotExistingT) {
 		bm.atT(0);
 		FAIL() << "Expected an std::out_of_range exception to be thrown when "
 				  "accessing a non-existant key T";
-	} catch(std::out_of_range) {}
+	} catch(std::out_of_range &) {}
 }
 
 TEST(BiMap, AccessNotExistingU) {
@@ -17,7 +17,7 @@ TEST(BiMap, AccessNotExistingU) {
 		bm.atU(0);
 		FAIL() << "Expected an std::out_of_range exception to be thrown when "
 				  "accessing a non-existant key T";
-	} catch(std::out_of_range) {}
+	} catch(std::out_of_range &) {}
 }
 
 TEST(BiMap, InsertionToEmptyBiMap) {
