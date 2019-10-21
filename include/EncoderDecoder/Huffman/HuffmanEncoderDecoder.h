@@ -40,9 +40,7 @@ public:
 
 private:
 	static constexpr int MAX_ENCODED_BITS = 32;
-	static const MappingType canonicalMapping;
 
-	bool usingCanonicalEncoding;
 	MappingType mapping;
 
 	/**
@@ -88,13 +86,10 @@ private:
 		int depth);
 
 public:
-	HuffmanEncoderDecoder();
-
 	// Inherited methods
 	std::pair<bool, EncodedType> encode(const std::string &plaintext) const;
 	std::pair<bool, std::string> decode(
 		const EncodedType &encodedPlaintext) const;
-	void useCanonicalEncoding();
 	bool makeEncodingFromText(const std::string &plaintext);
 	void setEncoding(MappingType mapping);
 	const MappingType &getEncoding() const;

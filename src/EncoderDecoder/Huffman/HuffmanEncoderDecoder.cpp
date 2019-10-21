@@ -1,8 +1,5 @@
 #include "EncoderDecoder/Huffman/HuffmanEncoderDecoder.h"
 
-const HuffmanEncoderDecoder::MappingType
-	HuffmanEncoderDecoder::canonicalMapping;
-
 HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(
 	const std::string &plaintext) {
 
@@ -71,6 +68,7 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(
 
 std::pair<bool, HuffmanEncoderDecoder::MappingType>
 	HuffmanEncoderDecoder::createMapping(const NodePtr &root) {
+
 	MappingType mapping;
 
 	// If the tree is empty, then so should the mapping be
@@ -134,15 +132,10 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping,
 	}
 }
 
-HuffmanEncoderDecoder::HuffmanEncoderDecoder() : usingCanonicalEncoding(true) {}
-
 std::pair<bool, HuffmanEncoderDecoder::EncodedType>
 	HuffmanEncoderDecoder::encode(const std::string &plaintext) const {
 
 	constexpr unsigned char BITS_IN_CHAR = 8;
-
-	// Get the correct encoding to use
-	auto &mapping = this->getEncoding();
 
 	// Convert the characters into encoded symbols with the mapping
 	std::vector<std::pair<unsigned char, unsigned int>> encodedSymbols;
@@ -150,7 +143,7 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType>
 		std::transform(plaintext.begin(),
 			plaintext.end(),
 			std::back_inserter(encodedSymbols),
-			[&mapping](auto c) { return std::pair(mapping.atT(c)); });
+			[&m = this->mapping](auto c) { return std::pair(m.atT(c)); });
 	} catch(std::out_of_range) { return {false, EncodedType()}; }
 
 	EncodedType encodedText;
@@ -194,7 +187,6 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 
 	constexpr unsigned char BITS_IN_CHAR = 8;
 
-	auto &mapping = this->getEncoding();
 	std::string plaintext;
 	auto charIt = encodedText.s.begin();
 	unsigned char offsetInChar = BITS_IN_CHAR;
@@ -225,7 +217,7 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 		// If it doesn't exist, atU will throw an exception, and we'll try again
 		// next time
 		try {
-			plaintext += mapping.atU({currentLength, currentValue});
+			plaintext += this->mapping.atU({currentLength, currentValue});
 			currentValue = 0;
 			currentLength = 0;
 		} catch(std::out_of_range) {}
@@ -239,29 +231,22 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 	return {true, plaintext};
 }
 
-void HuffmanEncoderDecoder::useCanonicalEncoding() {
-	this->usingCanonicalEncoding = true;
-}
-
 bool HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
 	auto frequencies = HuffmanEncoderDecoder::getFrequencies(plaintext);
 	auto root = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
 	auto [success, mapping] = HuffmanEncoderDecoder::createMapping(root);
 	if(success) {
-		this->mapping = mapping;
-		this->usingCanonicalEncoding = false;
+		this->mapping = std::move(mapping);
 	}
 	return success;
 }
 
 void HuffmanEncoderDecoder::setEncoding(MappingType mapping) {
 	this->mapping = std::move(mapping);
-	this->usingCanonicalEncoding = false;
 }
 
 const HuffmanEncoderDecoder::MappingType &
 	HuffmanEncoderDecoder::getEncoding() const {
-	return this->usingCanonicalEncoding ?
-		HuffmanEncoderDecoder::canonicalMapping :
-		this->mapping;
+
+	return this->mapping;
 }

@@ -30,15 +30,8 @@ public:
 		const EncodedType &encodedPlaintext) const = 0;
 
 	/**
-	 * @brief Sets the canonical encoding as the encoding to use for future
-	 * encode/decode operations
-	 *
-	 */
-	virtual void useCanonicalEncoding() = 0;
-
-	/**
-	 * @brief Extracts the optimal encoding for the given plaintext and sets it
-	 * as the encoding to use for future encode/decode operations
+	 * @brief Extracts the canonical encoding for the given plaintext and sets
+	 * it as the encoding to use for future encode/decode operations
 	 *
 	 * @param plaintext The text to extract the encoding from
 	 * @return true If the encoding was successfuly created

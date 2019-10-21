@@ -6,8 +6,7 @@ This project is an exercise in creating a text encoder.
 
 - Create an executable that can:
 	- Encode a textual file using a given coding scheme. The coding scheme can be either a:
-		- Canonical scheme
-		- Scheme generated from the text to encode
+		- Canonical scheme generated from the text to encode
 		- Scheme generated from other arbitrary text
 	- Encoding may fail if:
 		- The input file's alphabet is not contained in the requested coding scheme's alphabet.
@@ -93,11 +92,10 @@ This section contains the encoded text itself. This section is present only if t
 ## CLI
 - `dane -h`
 	- Print usage information
-- `dane [-c | -i encoding_file] -e text_file encoded_file`
+- `dane [-i encoding_file] -e text_file encoded_file`
 	- Encode `text_file` and save the result in `encoded_file`
-		- If `-c` is given use canonical encoding
 		- If `-i` is given import the encoding from `encoding_file`
-		- Else generate the encoding
+		- Else generate the canonical encoding from `text_file`
 - `dane -d encoded_text_file text_file`
 	- Decode `encoded_text_file` and save the result in `text_file`
 - `dane -g text_file encoding_file`
