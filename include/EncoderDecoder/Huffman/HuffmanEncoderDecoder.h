@@ -87,12 +87,13 @@ private:
 
 public:
 	// Inherited methods
-	std::pair<bool, EncodedType> encode(const std::string &plaintext) const;
-	std::pair<bool, std::string> decode(
+	virtual std::pair<bool, EncodedType> encode(
+		const std::string &plaintext) const;
+	virtual std::pair<bool, std::string> decode(
 		const EncodedType &encodedPlaintext) const;
-	bool makeEncodingFromText(const std::string &plaintext);
-	void setEncoding(MappingType mapping);
-	const MappingType &getEncoding() const;
+	virtual bool makeEncodingFromText(const std::string &plaintext);
+	virtual void setEncoding(MappingType mapping);
+	virtual const MappingType &getEncoding() const;
 
 	friend std::ostream &operator<<(std::ostream &os, const Node &);
 	friend NodePtr operator+(NodePtr &n1, NodePtr &n2);
