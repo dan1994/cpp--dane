@@ -46,7 +46,7 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(
 		return nullptr;
 	}
 
-	// While there is more than one element in the list
+	// Build a tree out of the list elements
 	while(frequenciesList.size() > 1) {
 		// Pop first 2 elements
 		auto n1 = std::move(frequenciesList.front());
