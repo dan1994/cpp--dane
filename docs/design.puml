@@ -60,7 +60,7 @@ class DaneHeader {
 	+ {field}	{static} magic : constexpr uint16_t
 	+ {field}	{static} version : constexpr uint8_t
 	+ {field}	encoding : uint8_t
-	+ {field}	options : uint8_t
+	+ {field}	options : uint16_t
 	+ {field}	checksum : uint16_t
 	+ {method}	toString() const : std::string
 	+ {method}	fromString(const std::string &s) : void
@@ -69,7 +69,7 @@ class DaneHeader {
 DaneHeader +-- Options : Public Nested
 note right of Options : To be able to access DaneHeader::Options::<option>
 class Options {
-	+ {field}	{static} Options : enum
+	+ {field}	EncodingOptions : enum
 }
 
 DaneStream *-- AbstractEncoderDecoder
