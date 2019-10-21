@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <bits/stdc++.h>
+#include <limits>
 #include <numeric>
 #include <vector>
 
@@ -39,8 +40,6 @@ public:
 	friend class HuffmanEncoderDecoder_MakeEncodingFromTextSubRoutines_Test;
 
 private:
-	static constexpr int MAX_ENCODED_BITS = 32;
-
 	MappingType mapping;
 
 	/**

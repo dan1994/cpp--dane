@@ -5,8 +5,9 @@ HuffmanEncoderDecoder::NodeVector HuffmanEncoderDecoder::getFrequencies(
 
 	// Initialize frequencies
 	NodeVector frequencies;
-	frequencies.reserve(256);
-	for(int c = 0; c < 256; c++) {
+	constexpr auto size = std::numeric_limits<unsigned char>::max() + 1;
+	frequencies.reserve(size);
+	for(int c = 0; c < size; c++) {
 		frequencies.push_back(std::make_unique<Node>(Node(c)));
 	}
 
@@ -89,7 +90,7 @@ std::pair<bool, HuffmanEncoderDecoder::MappingType>
 		HuffmanEncoderDecoder::dfs(mapping,
 			root,
 			std::make_pair<unsigned char, unsigned int>(0, 0),
-			32);
+			std::numeric_limits<unsigned int>::digits);
 	} catch(std::length_error) { return {false, mapping}; }
 
 	return {true, mapping};
@@ -135,7 +136,8 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping,
 std::pair<bool, HuffmanEncoderDecoder::EncodedType>
 	HuffmanEncoderDecoder::encode(const std::string &plaintext) const {
 
-	constexpr unsigned char BITS_IN_CHAR = 8;
+	constexpr unsigned char BITS_IN_CHAR =
+		std::numeric_limits<unsigned char>::digits;
 
 	// Convert the characters into encoded symbols with the mapping
 	std::vector<std::pair<unsigned char, unsigned int>> encodedSymbols;
@@ -185,7 +187,8 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType>
 std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 	const HuffmanEncoderDecoder::EncodedType &encodedText) const {
 
-	constexpr unsigned char BITS_IN_CHAR = 8;
+	constexpr unsigned char BITS_IN_CHAR =
+		std::numeric_limits<unsigned char>::digits;
 
 	std::string plaintext;
 	auto charIt = encodedText.s.begin();
@@ -198,7 +201,7 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 	while(charIt != lastCharIt || offsetInChar > encodedText.paddingSize) {
 		// Decoding error: The length of the current "guess" is larger than the
 		// max length
-		if(currentLength == 32) {
+		if(currentLength == std::numeric_limits<unsigned int>::digits) {
 			return {false, ""};
 		}
 
