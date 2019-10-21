@@ -3,10 +3,9 @@
 
 #include <string>
 
-class PaddedString {
-public:
-	uint8_t paddingSize;
+struct PaddedString {
 	std::string s;
+	uint8_t paddingSize;
 };
 
 #endif
