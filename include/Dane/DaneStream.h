@@ -12,8 +12,8 @@
 template <typename T>
 class DaneStream {
 protected:
-	using EncodedType =
-		decltype<std::declval<T>().encode(std::declval(std::string))>;
+	using MappingType = typename T::MappingType;
+	using EncodedType = typename T::EncodedType;
 
 	DaneHeader daneHeader;
 	T encoderDecoder;
