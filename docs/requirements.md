@@ -33,7 +33,7 @@ This section is present in all `.dane` files in every version, and is located at
 
 #### Field Description
 
-- `magic` is the constant `0xdane`
+- `magic` is the constant `0xdabe`
 - `version` is the file format version
 - `encoding` is the type of encoding
 	- At this point in time only huffman encoding is supported which is represented by the value 0
