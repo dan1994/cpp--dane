@@ -28,7 +28,22 @@ public:
 	uint16_t options;
 	uint16_t checksum;
 
+	/**
+	 * @brief Creates a string represntation of the header
+	 *
+	 * @return std::string The string representation
+	 */
 	std::string toString() const;
+
+	/**
+	 * @brief Checks if the given string is a valid header and if so, updates
+	 * the object with its values. A header is considered valid if its length is
+	 * correct, and if the magic and version fields are correct.
+	 *
+	 * @param s The string to parse
+	 * @return true If s is a valid header
+	 * @return false Otherwise
+	 */
 	bool fromString(const std::string &s);
 
 	class Options {
