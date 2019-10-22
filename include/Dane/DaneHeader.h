@@ -5,6 +5,20 @@
 #include <string>
 
 class DaneHeader {
+private:
+	static constexpr auto msByte = [](auto x) -> unsigned char {
+		return x >> std::numeric_limits<unsigned char>::digits;
+	};
+
+	static constexpr auto lsByte = [](auto x) -> unsigned char {
+		return x & 0xff;
+	};
+
+	static constexpr auto wordFromChars = [](unsigned char ms,
+											  unsigned char ls) -> uint16_t {
+		return (ms << std::numeric_limits<unsigned char>::digits) | ls;
+	};
+
 public:
 	constexpr static int HEADER_SIZE = 8;
 
