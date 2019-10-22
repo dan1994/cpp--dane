@@ -93,9 +93,8 @@ class EncoderDaneStream<T : public AbstractEncoderDecoder> {
 	- {method}	encodingToString() const : std::string
 	- {method}	encodedToString() const : std::string
 	- {method}	updateChecksum() : void
-	+ {method}	useCanonicalEncoding() : void
 	+ {method}	makeEncodingFromText(const std::string &plaintext) : void
-	+ {method}	setEncoding(T::MappingType &&mapping) : void
+	+ {method}	setEncoding(T::MappingType mapping) : void
 	+ {method}	friend operator<<(ostream &os, const EncoderDaneStream &rhs) : ostream &
 	+ {method}	friend operator>>(istream &is, const EncoderDaneStream &rhs) : istream &
 }
