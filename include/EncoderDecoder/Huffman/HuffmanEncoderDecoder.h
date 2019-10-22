@@ -37,7 +37,6 @@ public:
 	using EncodedType = PaddedString;
 	using NodePtr = std::unique_ptr<Node>;
 	using NodeVector = std::vector<NodePtr>;
-	friend class HuffmanEncoderDecoder_MakeEncodingFromTextSubRoutines_Test;
 
 private:
 	MappingType mapping;
@@ -96,6 +95,8 @@ public:
 
 	friend std::ostream &operator<<(std::ostream &os, const Node &);
 	friend NodePtr operator+(NodePtr &n1, NodePtr &n2);
+
+	friend class HuffmanEncoderDecoder_MakeEncodingFromTextSubRoutines_Test;
 };
 
 #endif
