@@ -15,8 +15,8 @@ def do_all(name, cxxflags, linkflags, libs, source_dirs, target, exclude_sources
 	env = Environment(CXX='clang++', CXXFLAGS=cxxflags, LINKFLAGS=linkflags, LIBS=libs, CPPPATH=['include', 'test/include'])
 	objs = []
 	for s in source:
-		# Replace first folder with build and remove file suffix
-		t = os.path.join('build', name, s[s.find('/') + 1 : s.rfind('.')])
+		# Remove file suffix
+		t = os.path.join('build', name, s[: s.rfind('.')])
 		objs.append(env.Object(target=t, source=s))
 	program = env.Program(target=target, source=objs)
 	env.Alias(name, target)
