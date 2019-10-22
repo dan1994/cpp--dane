@@ -1,3 +1,6 @@
+#ifndef PAIR_HASH_H
+#define PAIR_HASH_H
+
 #include <utility>
 
 namespace std {
@@ -8,3 +11,5 @@ namespace std {
 		}
 	};
 } // namespace std
+
+#endif
