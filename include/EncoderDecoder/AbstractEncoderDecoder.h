@@ -3,9 +3,12 @@
 
 #include <string>
 
-template <typename MappingType, typename EncodedType>
+template <typename M, typename E>
 class AbstractEncoderDecoder {
 public:
+	using MappingType = M;
+	using EncodedType = E;
+
 	/**
 	 * @brief Encodes a given plaintext string.
 	 *
