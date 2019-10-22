@@ -73,7 +73,7 @@ std::pair<bool, HuffmanEncoderDecoder::MappingType>
 
 	// If the tree is empty, then so should the mapping be
 	if(root == nullptr) {
-		return {false, mapping};
+		return {true, mapping};
 	}
 
 	// If the tree has only one element, we want to assign it a single-bit 0
