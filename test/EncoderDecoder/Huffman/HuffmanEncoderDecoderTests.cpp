@@ -39,7 +39,8 @@ TEST(HuffmanEncoderDecoder, MakeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->rightSon->frequency, 6);
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
 
-	auto [success, mapping] = HuffmanEncoderDecoder::createMapping(tree);
+	auto [success, mapping] =
+		HuffmanEncoderDecoder::createMapping(std::move(tree));
 	ASSERT_TRUE(success) << "Failed in creating a mapping";
 	EXPECT_EQ(
 		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
