@@ -67,7 +67,7 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(
 }
 
 std::pair<bool, HuffmanEncoderDecoder::MappingType>
-	HuffmanEncoderDecoder::createMapping(const NodePtr &root) {
+	HuffmanEncoderDecoder::createMapping(const NodePtr root) {
 
 	MappingType mapping;
 
@@ -236,7 +236,8 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 bool HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
 	auto frequencies = HuffmanEncoderDecoder::getFrequencies(plaintext);
 	auto root = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
-	auto [success, mapping] = HuffmanEncoderDecoder::createMapping(root);
+	auto [success, mapping] =
+		HuffmanEncoderDecoder::createMapping(std::move(root));
 	if(success) {
 		this->mapping = std::move(mapping);
 	}

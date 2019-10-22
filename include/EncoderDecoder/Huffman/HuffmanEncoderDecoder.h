@@ -67,7 +67,7 @@ private:
 	 * @return std::pair<bool, MappingType> A pair indicating success of the
 	 * operation and the huffman mapping
 	 */
-	static std::pair<bool, MappingType> createMapping(const NodePtr &root);
+	static std::pair<bool, MappingType> createMapping(const NodePtr root);
 
 	/**
 	 * @brief A helper function to createMapping. Walks recursively on a tree,
