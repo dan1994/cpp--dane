@@ -82,7 +82,7 @@ class DaneStream<T : public AbstractEncoderDecoder> {
 	# {field}	daneHeader : DaneHeader
 	# {field}	encoderDecoder : T
 	# {field}	plaintext : std::string
-	# {field}	encodedPlaintext : std::string
+	# {field}	encodedText : T::EncodedType
 	# {method}	calculateChecksum() : uint16_t
 	+ {method}	setOptions(uint8_t options) : void
 }
