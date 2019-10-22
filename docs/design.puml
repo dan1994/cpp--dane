@@ -55,7 +55,7 @@ class Node {
 	+ {method}	operator++(int) : Node &
 }
 
-DaneStream +-- DaneHeader : Protected Nested
+DaneStream *-- DaneHeader
 class DaneHeader {
 	+ {field}	{static} magic : constexpr uint16_t
 	+ {field}	{static} version : constexpr uint8_t
