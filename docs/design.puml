@@ -15,10 +15,9 @@ class PaddedString {
 }
 
 abstract class AbstractEncoderDecoder<MappingType, EncodedType> {
-	+ {method}	{abstract} encode(const std::string &plaintext) const : std::pair<bool, EncodedType>
-	+ {method}	{abstract} decode(const EncodedType &encodedText) const : \
-std::pair<bool, std::string>
-	+ {method}	{abstract} makeEncodingFromText(const std::string &plaintext) : bool
+	+ {method}	{abstract} encode(const std::string &plaintext) const : EncodedType
+	+ {method}	{abstract} decode(const EncodedType &encodedText) const : std::string
+	+ {method}	{abstract} makeEncodingFromText(const std::string &plaintext) : void
 	+ {method}	{abstract} setEncoding(MappingType mapping) : void
 	+ {method}	{abstract} getEncoding() const : const MappingType &
 }
@@ -37,7 +36,7 @@ class HuffmanEncoderDecoder {
 	--
 	- {method}	{static} getFrequencies(const std::string &plaintext) : NodeVector
 	- {method}	{static} buildPrefixlessTree(NodeVector &frequencies) : NodePtr
-	- {method}	{static} createMapping(const NodePtr root) : std::pair<bool, MappingType>
+	- {method}	{static} createMapping(const NodePtr root) : MappingType
 	- {method}	{static} dfs(MappingType &mapping, const NodePtr &n, \
 std::pair<unsigned char, unsigned int> code) : void
 	+ {method}	friend operator+(NodePtr &n1, NodePtr &n2) : NodePtr

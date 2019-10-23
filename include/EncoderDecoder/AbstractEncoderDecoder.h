@@ -13,34 +13,26 @@ public:
 	 * @brief Encodes a given plaintext string.
 	 *
 	 * @param plaintext String to encode
-	 * @return std::pair<bool, EncodedType> A pair representing whether the
-	 * encoding succeeded and the result of the encoding operation. If the first
-	 * value is false, the value of the second is undefined.
+	 * @return EncodedType The result of the encoding operation.
 	 */
-	virtual std::pair<bool, EncodedType> encode(
-		const std::string &plaintext) const = 0;
+	virtual EncodedType encode(const std::string &plaintext) const = 0;
 
 	/**
 	 * @brief Decodes an encoded input into a string
 	 *
-	 * @param encodedPlaintext An object of type EncodedType representing the
-	 * encoded plaintext
-	 * @return std::pair<bool, std::string> A pair representing whether the
-	 * decoding succeeded and the result of the decoding operation. If the first
-	 * value is false, the value of the second is undefined.
+	 * @param encodedText An object of type EncodedType representing the
+	 * encoded text
+	 * @return std::string The decoded plaintext
 	 */
-	virtual std::pair<bool, std::string> decode(
-		const EncodedType &encodedPlaintext) const = 0;
+	virtual std::string decode(const EncodedType &encodedText) const = 0;
 
 	/**
 	 * @brief Extracts the canonical encoding for the given plaintext and sets
 	 * it as the encoding to use for future encode/decode operations
 	 *
 	 * @param plaintext The text to extract the encoding from
-	 * @return true If the encoding was successfuly created
-	 * @return false If failed in creating the encoding
 	 */
-	virtual bool makeEncodingFromText(const std::string &plaintext) = 0;
+	virtual void makeEncodingFromText(const std::string &plaintext) = 0;
 
 	/**
 	 * @brief Sets the encoding to use to the given encoding

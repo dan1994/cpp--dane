@@ -66,14 +66,14 @@ HuffmanEncoderDecoder::NodePtr HuffmanEncoderDecoder::buildPrefixlessTree(
 	return std::move(frequenciesList.front());
 }
 
-std::pair<bool, HuffmanEncoderDecoder::MappingType>
-	HuffmanEncoderDecoder::createMapping(const NodePtr root) {
+HuffmanEncoderDecoder::MappingType HuffmanEncoderDecoder::createMapping(
+	const NodePtr root) {
 
 	MappingType mapping;
 
 	// If the tree is empty, then so should the mapping be
 	if(root == nullptr) {
-		return {true, mapping};
+		return mapping;
 	}
 
 	// If the tree has only one element, we want to assign it a single-bit 0
@@ -81,18 +81,16 @@ std::pair<bool, HuffmanEncoderDecoder::MappingType>
 	if(root->leftSon == nullptr && root->rightSon == nullptr) {
 		mapping.insert(
 			root->character, std::make_pair<unsigned char, unsigned int>(1, 0));
-		return {true, mapping};
+		return mapping;
 	}
 
 	// Otherwise we use dfs on the tree with an initial code of 0 length
-	try {
-		HuffmanEncoderDecoder::dfs(mapping,
-			root,
-			std::make_pair<unsigned char, unsigned int>(0, 0),
-			std::numeric_limits<unsigned int>::digits);
-	} catch(std::length_error &) { return {false, mapping}; }
+	HuffmanEncoderDecoder::dfs(mapping,
+		root,
+		std::make_pair<unsigned char, unsigned int>(0, 0),
+		std::numeric_limits<unsigned int>::digits);
 
-	return {true, mapping};
+	return mapping;
 }
 
 void HuffmanEncoderDecoder::dfs(MappingType &mapping,
@@ -132,20 +130,27 @@ void HuffmanEncoderDecoder::dfs(MappingType &mapping,
 	}
 }
 
-std::pair<bool, HuffmanEncoderDecoder::EncodedType>
-	HuffmanEncoderDecoder::encode(const std::string &plaintext) const {
+HuffmanEncoderDecoder::EncodedType HuffmanEncoderDecoder::encode(
+	const std::string &plaintext) const {
 
 	constexpr unsigned char BITS_IN_CHAR =
 		std::numeric_limits<unsigned char>::digits;
 
 	// Convert the characters into encoded symbols with the mapping
 	std::vector<std::pair<unsigned char, unsigned int>> encodedSymbols;
-	try {
-		std::transform(plaintext.begin(),
-			plaintext.end(),
-			std::back_inserter(encodedSymbols),
-			[&m = this->mapping](auto c) { return std::pair(m.atT(c)); });
-	} catch(std::out_of_range &) { return {false, EncodedType()}; }
+	std::transform(plaintext.begin(),
+		plaintext.end(),
+		std::back_inserter(encodedSymbols),
+		[&m = this->mapping](auto c) {
+			try {
+				return std::pair(m.atT(c));
+			} catch(std::out_of_range &) {
+				std::string msg =
+					"There is no encoded symbol corresponding to char ";
+				msg += c;
+				throw std::out_of_range(msg);
+			}
+		});
 
 	EncodedType encodedText;
 	unsigned char currentSize = 0;
@@ -180,10 +185,10 @@ std::pair<bool, HuffmanEncoderDecoder::EncodedType>
 		encodedText.s += currentChar;
 	}
 
-	return {true, encodedText};
+	return encodedText;
 }
 
-std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
+std::string HuffmanEncoderDecoder::decode(
 	const HuffmanEncoderDecoder::EncodedType &encodedText) const {
 
 	constexpr unsigned char BITS_IN_CHAR =
@@ -201,7 +206,8 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 		// Decoding error: The length of the current "guess" is larger than the
 		// max length
 		if(currentLength == std::numeric_limits<unsigned int>::digits) {
-			return {false, ""};
+			throw std::length_error("Exceeded the maximum length of an encoded "
+									"character w/o finding a decodable result");
 		}
 
 		// Append a bit to the current value
@@ -227,21 +233,18 @@ std::pair<bool, std::string> HuffmanEncoderDecoder::decode(
 
 	// Decoding error: Reached padding in the middle of symbol
 	if(currentLength != 0) {
-		return {false, ""};
+		throw std::out_of_range(
+			"Reached end of encoded input in the middle of decoding");
 	}
 
-	return {true, plaintext};
+	return plaintext;
 }
 
-bool HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
+void HuffmanEncoderDecoder::makeEncodingFromText(const std::string &plaintext) {
 	auto frequencies = HuffmanEncoderDecoder::getFrequencies(plaintext);
 	auto root = HuffmanEncoderDecoder::buildPrefixlessTree(frequencies);
-	auto [success, mapping] =
-		HuffmanEncoderDecoder::createMapping(std::move(root));
-	if(success) {
-		this->mapping = std::move(mapping);
-	}
-	return success;
+	// This might throw an exception that should be passed to the caller
+	this->mapping = HuffmanEncoderDecoder::createMapping(std::move(root));
 }
 
 void HuffmanEncoderDecoder::setEncoding(MappingType mapping) {
