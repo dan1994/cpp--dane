@@ -64,10 +64,9 @@ private:
 	 * @brief Convert a prefixless binary tree into a huffman mapping
 	 *
 	 * @param root The root of the tree
-	 * @return std::pair<bool, MappingType> A pair indicating success of the
-	 * operation and the huffman mapping
+	 * @return MappingType The Huffman mapping
 	 */
-	static std::pair<bool, MappingType> createMapping(const NodePtr root);
+	static MappingType createMapping(const NodePtr root);
 
 	/**
 	 * @brief A helper function to createMapping. Walks recursively on a tree,
@@ -85,11 +84,9 @@ private:
 
 public:
 	// Inherited methods
-	virtual std::pair<bool, EncodedType> encode(
-		const std::string &plaintext) const override;
-	virtual std::pair<bool, std::string> decode(
-		const EncodedType &encodedPlaintext) const override;
-	virtual bool makeEncodingFromText(const std::string &plaintext) override;
+	virtual EncodedType encode(const std::string &plaintext) const override;
+	virtual std::string decode(const EncodedType &encodedText) const override;
+	virtual void makeEncodingFromText(const std::string &plaintext) override;
 	virtual void setEncoding(MappingType mapping) override;
 	virtual const MappingType &getEncoding() const override;
 

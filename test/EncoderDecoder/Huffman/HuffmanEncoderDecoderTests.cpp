@@ -39,9 +39,14 @@ TEST(HuffmanEncoderDecoder, MakeEncodingFromTextSubRoutines) {
 	EXPECT_EQ(tree->rightSon->rightSon->frequency, 6);
 	EXPECT_EQ(tree->rightSon->rightSon->character, '!');
 
-	auto [success, mapping] =
-		HuffmanEncoderDecoder::createMapping(std::move(tree));
-	ASSERT_TRUE(success) << "Failed in creating a mapping";
+	HuffmanEncoderDecoder::MappingType mapping;
+	try {
+		mapping = HuffmanEncoderDecoder::createMapping(std::move(tree));
+	} catch(std::exception &e) {
+		FAIL() << "createMapping() threw the following exception: \n"
+			   << e.what();
+	}
+
 	EXPECT_EQ(
 		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
 	EXPECT_EQ(
@@ -56,9 +61,15 @@ TEST(HuffmanEncoderDecoder, MakeEncodingFromTextSubRoutines) {
 
 TEST(HuffmanEncoderDecoder, MakeEncodingFromText) {
 	std::string s = "abca;;;c;c!c!c!!!!";
+
 	HuffmanEncoderDecoder hed;
-	ASSERT_TRUE(hed.makeEncodingFromText(s))
-		<< "Failed in creating the encoding";
+	try {
+		hed.makeEncodingFromText(s);
+	} catch(std::exception &e) {
+		FAIL() << "makeEncodingFromText() threw the following exception: \n"
+			   << e.what();
+	}
+
 	auto &mapping = hed.getEncoding();
 	EXPECT_EQ(
 		mapping.atT('b'), (std::make_pair<unsigned char, unsigned int>(3, 0)));
@@ -91,8 +102,14 @@ TEST(HuffmanEncoderDecoder, IdentityEncoding) {
 	ASSERT_TRUE(m.insert('c', std::make_pair(8, 'c')));
 	hed.setEncoding(m);
 	std::string s = "aabcbbc";
-	auto [success, encodedText] = hed.encode(s);
-	ASSERT_TRUE(success) << "Failed encoding";
+
+	HuffmanEncoderDecoder::EncodedType encodedText;
+	try {
+		encodedText = hed.encode(s);
+	} catch(std::exception &e) {
+		FAIL() << "encode() threw the following exception:\n" << e.what();
+	}
+
 	EXPECT_EQ(encodedText.s, s);
 }
 
@@ -109,8 +126,14 @@ TEST(HuffmanEncoderDecoder, Plus1Encoding) {
 		s.begin(), s.end(), std::back_inserter(encodedS), [](char c) {
 			return ++c;
 		});
-	auto [success, encodedText] = hed.encode(s);
-	ASSERT_TRUE(success) << "Failed encoding";
+
+	HuffmanEncoderDecoder::EncodedType encodedText;
+	try {
+		encodedText = hed.encode(s);
+	} catch(std::exception &e) {
+		FAIL() << "encode() threw the following exception:\n" << e.what();
+	}
+
 	EXPECT_EQ(encodedText.s, encodedS);
 }
 
@@ -124,8 +147,14 @@ TEST(HuffmanEncoderDecoder, ActualEncoding) {
 	std::string s = "aabcbbc";
 	// 00101110 1011
 	unsigned char encodedS[3] = {46, 176, 0};
-	auto [success, encodedText] = hed.encode(s);
-	ASSERT_TRUE(success) << "Failed encoding";
+
+	HuffmanEncoderDecoder::EncodedType encodedText;
+	try {
+		encodedText = hed.encode(s);
+	} catch(std::exception &e) {
+		FAIL() << "encode() threw the following exception:\n" << e.what();
+	}
+
 	EXPECT_EQ(encodedText.s, std::string(reinterpret_cast<char *>(encodedS)));
 }
 
@@ -137,10 +166,21 @@ TEST(HuffmanEncoderDecoder, EncodeDecode) {
 	ASSERT_TRUE(m.insert('c', std::make_pair(2, 3)));
 	hed.setEncoding(m);
 	std::string s = "aabcbbc";
-	auto [success, encodedText] = hed.encode(s);
-	ASSERT_TRUE(success) << "Failed encoding";
-	auto [success2, plaintext] = hed.decode(encodedText);
-	ASSERT_TRUE(success2) << "Failed decoding";
+
+	HuffmanEncoderDecoder::EncodedType encodedText;
+	try {
+		encodedText = hed.encode(s);
+	} catch(std::exception &e) {
+		FAIL() << "encode() threw the following exception:\n" << e.what();
+	}
+
+	std::string plaintext;
+	try {
+		plaintext = hed.decode(encodedText);
+	} catch(std::exception &e) {
+		FAIL() << "decode() threw the following exception:\n" << e.what();
+	}
+
 	EXPECT_EQ(plaintext, s) << "decode(encode(s)) != s";
 }
 
@@ -150,14 +190,31 @@ TEST(HuffmanEncoderDecoder, EncodeDecodeRandomString) {
 	std::random_device rd;
 	std::mt19937 mt(rd());
 	std::uniform_int_distribution<unsigned char> dist(0, 255);
+
 	for(int i = 0; i < 10000; i++) {
 		s += dist(mt);
 	}
-	ASSERT_TRUE(hed.makeEncodingFromText(s))
-		<< "Failed in creating the encoding";
-	auto [success, encodedText] = hed.encode(s);
-	ASSERT_TRUE(success) << "Failed encoding";
-	auto [success2, plaintext] = hed.decode(encodedText);
-	ASSERT_TRUE(success2) << "Failed decoding";
+
+	try {
+		hed.makeEncodingFromText(s);
+	} catch(std::exception &e) {
+		FAIL() << "makeEncodingFromText() threw the following exception: \n"
+			   << e.what();
+	}
+
+	HuffmanEncoderDecoder::EncodedType encodedText;
+	try {
+		encodedText = hed.encode(s);
+	} catch(std::exception &e) {
+		FAIL() << "encode() threw the following exception:\n" << e.what();
+	}
+
+	std::string plaintext;
+	try {
+		plaintext = hed.decode(encodedText);
+	} catch(std::exception &e) {
+		FAIL() << "decode() threw the following exception:\n" << e.what();
+	}
+
 	EXPECT_EQ(plaintext, s) << "decode(encode(s)) != s";
 }
