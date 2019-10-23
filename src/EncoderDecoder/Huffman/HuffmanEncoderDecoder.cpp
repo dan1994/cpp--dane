@@ -210,16 +210,21 @@ std::string HuffmanEncoderDecoder::decode(
 									"character w/o finding a decodable result");
 		}
 
-		// Append a bit to the current value
-		offsetInChar--;
-		currentValue = (currentValue << 1) | ((*charIt >> offsetInChar) & 1);
-		currentLength++;
-
 		// If we finished going over the current char, go to the next
+		// NOTE: This if must come before decrementing offsetInChar, otherwise
+		// when encodedText.paddingSize == 0 we will enter an infinite loop and
+		// get a segfault. That will happen because when offsetInChar is
+		// decremented to 0, it will be reassigned to its initial value before
+		// being checked by the loop
 		if(offsetInChar == 0) {
 			charIt++;
 			offsetInChar = BITS_IN_CHAR;
 		}
+
+		// Append a bit to the current value
+		offsetInChar--;
+		currentValue = (currentValue << 1) | ((*charIt >> offsetInChar) & 1);
+		currentLength++;
 
 		// Try adding the character corresponding to the current encoding
 		// If it doesn't exist, atU will throw an exception, and we'll try again
