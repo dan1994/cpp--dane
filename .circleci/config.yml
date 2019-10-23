@@ -2,25 +2,10 @@ version: 2
 jobs:
     build:
         docker:
-            - image: debian:buster
+            - image: dan1994/cpp-build-env:1
 
         steps:
             - checkout
-
-            - run:
-                name: Setup
-                command: |
-                    apt update
-                    apt install -y clang
-                    apt install -y scons
-                    apt install -y libgtest-dev
-                    apt install -y cmake
-                    cd /usr/src/gtest
-                    cmake CMakeLists.txt
-                    make
-                    cp *.a /usr/lib
-                    ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a
-                    ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
             - run:
                 name: Build
