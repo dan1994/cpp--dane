@@ -18,6 +18,8 @@ This project is an exercise in creating a text encoder.
 
 This utility generates `.dane` (Dan encoding) binary files. The structure of these files is detailed in this chapter.
 
+All fields in the file will be in big endain format.
+
 ### DANE Header
 
 This section is present in all `.dane` files in every version, and is located at the beginning of the file.
