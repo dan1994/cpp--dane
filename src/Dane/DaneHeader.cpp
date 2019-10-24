@@ -1,0 +1,24 @@
+#include "Dane/DaneHeader.h"
+
+DaneHeader::DaneHeader() :
+	magic(MAGIC), version(VERSION), encoding(0), options(0), checksum(0) {}
+
+bool DaneHeader::validateHeader() const {
+	return this->magic == DaneHeader::MAGIC &&
+		this->version == DaneHeader::VERSION;
+}
+
+std::ostream &operator<<(std::ostream &os, const DaneHeader &header) {
+	const std::string s(
+		reinterpret_cast<const char *>(&header), sizeof(header));
+	return os << s;
+}
+
+std::istream &operator>>(std::istream &is, DaneHeader &header) {
+	char *s = reinterpret_cast<char *>(&header);
+	std::istream &is2 = is.read(s, sizeof(header));
+	if(is.gcount() != sizeof(header)) {
+		throw std::length_error("Not enough bytes to construct Dane Header");
+	}
+	return is2;
+}
