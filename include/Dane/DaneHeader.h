@@ -1,50 +1,38 @@
 #ifndef DANE_HEADER_H
 #define DANE_HEADER_H
 
+#include <boost/endian/arithmetic.hpp>
 #include <cstdint>
+#include <iostream>
 #include <string>
 
 class DaneHeader {
 private:
-	static constexpr auto msByte = [](auto x) -> unsigned char {
-		return x >> std::numeric_limits<unsigned char>::digits;
-	};
-
-	static constexpr auto lsByte = [](auto x) -> unsigned char {
-		return x & 0xff;
-	};
-
-	static constexpr auto wordFromChars = [](unsigned char ms,
-											  unsigned char ls) -> uint16_t {
-		return (ms << std::numeric_limits<unsigned char>::digits) | ls;
-	};
+	constexpr static uint16_t MAGIC = 0xdabe;
+	constexpr static uint8_t VERSION = 0x0;
 
 public:
-	constexpr static int HEADER_SIZE = 8;
+	boost::endian::big_uint16_t magic;
+	boost::endian::big_uint8_t version;
+	boost::endian::big_uint8_t encoding;
+	boost::endian::big_uint16_t options;
+	boost::endian::big_uint16_t checksum;
 
-	constexpr static uint16_t magic = 0xdabe;
-	constexpr static uint8_t version = 0x0;
-	uint8_t encoding;
-	uint16_t options;
-	uint16_t checksum;
-
-	/**
-	 * @brief Creates a string represntation of the header
-	 *
-	 * @return std::string The string representation
-	 */
-	std::string toString() const;
+	DaneHeader();
 
 	/**
-	 * @brief Checks if the given string is a valid header and if so, updates
-	 * the object with its values. A header is considered valid if its length is
-	 * correct, and if the magic and version fields are correct.
+	 * @brief Checks that the header is valid. A header is valid iff its magic
+	 * and version fields are equal to the precompiled constants of the class.
+	 * This function DOESN'T validate the checksum, as it is over the entire
+	 * file, and not over the header.
 	 *
-	 * @param s The string to parse
-	 * @return true If s is a valid header
+	 * @return true If the header is valid
 	 * @return false Otherwise
 	 */
-	bool fromString(const std::string &s);
+	bool validateHeader() const;
+
+	friend std::ostream &operator<<(std::ostream &os, const DaneHeader &header);
+	friend std::istream &operator>>(std::istream &is, DaneHeader &header);
 
 	class Options {
 	public:

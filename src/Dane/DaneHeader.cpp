@@ -1,35 +1,24 @@
 #include "Dane/DaneHeader.h"
 
-std::string DaneHeader::toString() const {
-	std::string s;
-	s += msByte(DaneHeader::magic);
-	s += lsByte(DaneHeader::magic);
-	s += lsByte(DaneHeader::version);
-	s += lsByte(this->encoding);
-	s += msByte(this->options);
-	s += lsByte(this->options);
-	s += msByte(this->checksum);
-	s += lsByte(this->checksum);
-	return s;
+DaneHeader::DaneHeader() :
+	magic(MAGIC), version(VERSION), encoding(0), options(0), checksum(0) {}
+
+bool DaneHeader::validateHeader() const {
+	return this->magic == DaneHeader::MAGIC &&
+		this->version == DaneHeader::VERSION;
 }
 
-bool DaneHeader::fromString(const std::string &s) {
-	if(s.size() != DaneHeader::HEADER_SIZE) {
-		return false;
+std::ostream &operator<<(std::ostream &os, const DaneHeader &header) {
+	const std::string s(
+		reinterpret_cast<const char *>(&header), sizeof(header));
+	return os << s;
+}
+
+std::istream &operator>>(std::istream &is, DaneHeader &header) {
+	char *s = reinterpret_cast<char *>(&header);
+	std::istream &is2 = is.read(s, sizeof(header));
+	if(is.gcount() != sizeof(header)) {
+		throw std::length_error("Not enough bytes to construct Dane Header");
 	}
-
-	auto chars = s.c_str();
-
-	uint16_t magic = wordFromChars(chars[0], chars[1]);
-	uint8_t version = chars[2];
-
-	if(magic != DaneHeader::magic || version != DaneHeader::version) {
-		return false;
-	}
-
-	this->encoding = chars[3];
-	this->options = wordFromChars(chars[4], chars[5]);
-	this->checksum = wordFromChars(chars[6], chars[7]);
-
-	return true;
+	return is2;
 }
