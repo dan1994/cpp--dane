@@ -2,7 +2,7 @@ version: 2
 jobs:
     build:
         docker:
-            - image: dan1994/cpp-build-env:1
+            - image: dan1994/cpp-build-env:2
 
         steps:
             - checkout
