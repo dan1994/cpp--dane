@@ -57,13 +57,17 @@ class Node {
 
 DaneStream *-- DaneHeader
 class DaneHeader {
-	+ {field}	{static} magic : constexpr uint16_t
-	+ {field}	{static} version : constexpr uint8_t
-	+ {field}	encoding : uint8_t
-	+ {field}	options : uint16_t
-	+ {field}	checksum : uint16_t
-	+ {method}	toString() const : std::string
-	+ {method}	fromString(const std::string &s) : void
+	- {field}	{static} MAGIC : constexpr uint16_t
+	- {field}	{static} VERSION : constexpr uint8_t
+	+ {field}	magic : boost::endian::big_uint16_t
+	+ {field}	version : boost::endian::big_uint8_t
+	+ {field}	encoding : boost::endian::big_uint8_t
+	+ {field}	options : boost::endian::big_uint16_t
+	+ {field}	checksum : boost::endian::big_uint16_t
+	+ {method}	DaneHeader()
+	+ {method}	validateHeader() const : bool
+	+ {method}	friend operator<<(std::ostream &os, const DaneHeader &header) : std::ostream &
+	+ {method}	friend operator>>(std::istream &is, DaneHeader &header) : std::instream &
 }
 
 DaneHeader +-- Options : Public Nested
