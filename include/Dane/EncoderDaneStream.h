@@ -17,7 +17,7 @@ public:
 	void setEncoding(DaneStream::MappingType mapping);
 
 	friend ostream &operator<<(ostream &os, const EncoderDaneStream &rhs);
-	friend istream &operator>>(istream &is, const EncoderDaneStream &rhs);
+	friend istream &operator>>(istream &is, EncoderDaneStream &rhs);
 };
 
 #endif

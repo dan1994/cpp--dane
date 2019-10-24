@@ -96,7 +96,7 @@ class EncoderDaneStream<T : public AbstractEncoderDecoder> {
 	+ {method}	makeEncodingFromText(const std::string &plaintext) : void
 	+ {method}	setEncoding(T::MappingType mapping) : void
 	+ {method}	friend operator<<(ostream &os, const EncoderDaneStream &rhs) : ostream &
-	+ {method}	friend operator>>(istream &is, const EncoderDaneStream &rhs) : istream &
+	+ {method}	friend operator>>(istream &is, EncoderDaneStream &rhs) : istream &
 }
 
 DaneStream <|-- DecoderDaneStream
@@ -106,7 +106,7 @@ class DecoderDaneStream<T : public AbstractEncoderDecoder> {
 	- {method}	parseEncodedSection(const std::string &encodedSection) : void
 	+ {method}	getEncoding() const : T::MappingType
 	+ {method}	friend operator<<(ostream &os, const DecoderDaneStream &rhs) : ostream &
-	+ {method}	friend operator>>(istream &is, const DecoderDaneStream &rhs) : istream &
+	+ {method}	friend operator>>(istream &is, DecoderDaneStream &rhs) : istream &
 }
 
 class EncodingIdBase {

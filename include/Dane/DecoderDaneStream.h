@@ -12,6 +12,9 @@ private:
 
 public:
 	DaneStream::MappingType getEncoding() const;
+
+	friend ostream &operator<<(ostream &os, const DecoderDaneStream &rhs);
+	friend istream &operator>>(istream &is, DecoderDaneStream &rhs);
 };
 
 #endif
