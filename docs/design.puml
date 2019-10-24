@@ -82,7 +82,7 @@ class DaneStream<T : public AbstractEncoderDecoder> {
 	# {field}	daneHeader : DaneHeader
 	# {field}	encoderDecoder : T
 	# {field}	plaintext : std::string
-	# {field}	encodedPlaintext : std::string
+	# {field}	encodedText : T::EncodedType
 	# {method}	calculateChecksum() : uint16_t
 	+ {method}	setOptions(uint8_t options) : void
 }
@@ -93,11 +93,10 @@ class EncoderDaneStream<T : public AbstractEncoderDecoder> {
 	- {method}	encodingToString() const : std::string
 	- {method}	encodedToString() const : std::string
 	- {method}	updateChecksum() : void
-	+ {method}	useCanonicalEncoding() : void
 	+ {method}	makeEncodingFromText(const std::string &plaintext) : void
-	+ {method}	setEncoding(T::MappingType &&mapping) : void
+	+ {method}	setEncoding(T::MappingType mapping) : void
 	+ {method}	friend operator<<(ostream &os, const EncoderDaneStream &rhs) : ostream &
-	+ {method}	friend operator>>(istream &is, const EncoderDaneStream &rhs) : istream &
+	+ {method}	friend operator>>(istream &is, EncoderDaneStream &rhs) : istream &
 }
 
 DaneStream <|-- DecoderDaneStream
@@ -107,7 +106,7 @@ class DecoderDaneStream<T : public AbstractEncoderDecoder> {
 	- {method}	parseEncodedSection(const std::string &encodedSection) : void
 	+ {method}	getEncoding() const : T::MappingType
 	+ {method}	friend operator<<(ostream &os, const DecoderDaneStream &rhs) : ostream &
-	+ {method}	friend operator>>(istream &is, const DecoderDaneStream &rhs) : istream &
+	+ {method}	friend operator>>(istream &is, DecoderDaneStream &rhs) : istream &
 }
 
 class EncodingIdBase {
