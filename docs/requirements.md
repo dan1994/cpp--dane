@@ -42,6 +42,7 @@ This section is present in all `.dane` files in every version, and is located at
 	- `encoding_only` is asserted if the file contains only an encoding without an encoded text. Located at bit 0.
 - `checksum` is a checksum over the entire file
 	- If the checksum is set to 0, then it should be ignored
+	- The type of checksum to be used is `CRC16/ARC`
 
 ### Encoding Section
 
