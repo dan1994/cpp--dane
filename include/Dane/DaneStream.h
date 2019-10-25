@@ -4,6 +4,7 @@
 #include "Dane/DaneHeader.h"
 #include "EncoderDecoder/AbstractEncoderDecoder.h"
 
+#include <boost/crc.hpp>
 #include <cstdint>
 #include <string>
 #include <type_traits>
@@ -26,7 +27,7 @@ protected:
 	 *
 	 * @return uint16_t The checksum
 	 */
-	uint16_t calculateChecksum();
+	uint16_t calculateChecksum() const;
 
 public:
 	/**
@@ -35,7 +36,9 @@ public:
 	 * @param options The options to use. It's recomended to specify them using
 	 * bitwise or operations on values under DaneHeader::Options::<option>.
 	 */
-	void setOptions(uint8_t options);
+	void setOptions(uint16_t options);
 };
+
+#include "Dane/DaneStream.hpp"
 
 #endif
