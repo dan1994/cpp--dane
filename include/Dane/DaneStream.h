@@ -14,6 +14,18 @@ protected:
 	using MappingType = typename T::MappingType;
 	using EncodedType = typename T::EncodedType;
 
+	struct EncodingSection {
+		boost::endian::big_uint16_t sectionSize;
+		boost::endian::big_uint8_t alphabetSize;
+		boost::endian::big_uint8_t reserved;
+	};
+
+	struct EncodedSymbol {
+		boost::endian::big_uint8_t character;
+		boost::endian::big_uint8_t size;
+		boost::endian::big_uint32_t representation;
+	};
+
 	DaneHeader daneHeader;
 	T encoderDecoder;
 	std::string plaintext;

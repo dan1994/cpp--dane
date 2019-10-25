@@ -87,6 +87,20 @@ class DaneStream<T : public AbstractEncoderDecoder> {
 	+ {method}	setOptions(uint16_t options) : void
 }
 
+DaneStream +-- EncodingSection : Protected Nested
+class EncodingSection {
+	+ {field}	sectionSize : boost::endian::big_uint16_t
+	+ {field}	alphabetSize : boost::endian::big_uint8_t
+	+ {field}	reserved : boost::endian::big_uint8_t
+}
+
+DaneStream +-- EncodedSymbol : Protected Nested
+class EncodedSymbol {
+	+ {field}	character : boost::endian::big_uint8_t
+	+ {field}	size : boost::endian::big_uint8_t
+	+ {field}	representation : boost::endian::big_uint32_t
+}
+
 DaneStream <|-- EncoderDaneStream
 class EncoderDaneStream<T : public AbstractEncoderDecoder> {
 	- {field}	extractEncodingFromText : bool

@@ -6,18 +6,6 @@
 
 template <>
 std::string EncoderDaneStream<HuffmanEncoderDecoder>::encodingToString() const {
-	struct EncodingSection {
-		boost::endian::big_uint16_t sectionSize;
-		boost::endian::big_uint8_t alphabetSize;
-		boost::endian::big_uint8_t reserved;
-	};
-
-	struct EncodedSymbol {
-		boost::endian::big_uint8_t character;
-		boost::endian::big_uint8_t size;
-		boost::endian::big_uint32_t representation;
-	};
-
 	auto mapping = this->encoderDecoder.getEncoding();
 	auto alphabetSize = mapping.size();
 	auto sectionSize = sizeof(EncodingSection) + 6 * alphabetSize;
