@@ -18,8 +18,8 @@ public:
 	void makeEncodingFromText(const std::string &plaintext);
 	void setEncoding(MappingType mapping);
 
-	friend ostream &operator<<(ostream &os, const EncoderDaneStream &rhs);
-	friend istream &operator>>(istream &is, EncoderDaneStream &rhs);
+	friend std::ostream &operator<<(std::ostream &os, EncoderDaneStream &rhs);
+	friend std::istream &operator>>(std::istream &is, EncoderDaneStream &rhs);
 };
 
 #include "Dane/EncoderDaneStream.hpp"
