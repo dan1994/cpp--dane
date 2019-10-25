@@ -8,10 +8,13 @@ bool DaneHeader::validateHeader() const {
 		this->version == DaneHeader::VERSION;
 }
 
+std::string DaneHeader::toString() const {
+	return std::string(
+		reinterpret_cast<const char *>(this), sizeof(DaneHeader));
+}
+
 std::ostream &operator<<(std::ostream &os, const DaneHeader &header) {
-	const std::string s(
-		reinterpret_cast<const char *>(&header), sizeof(header));
-	return os << s;
+	return os << header.toString();
 }
 
 std::istream &operator>>(std::istream &is, DaneHeader &header) {

@@ -31,6 +31,13 @@ public:
 	 */
 	bool validateHeader() const;
 
+	/**
+	 * @brief Returns a string representation of the struct (Big endian)
+	 *
+	 * @return std::string The representation
+	 */
+	std::string toString() const;
+
 	friend std::ostream &operator<<(std::ostream &os, const DaneHeader &header);
 	friend std::istream &operator>>(std::istream &is, DaneHeader &header);
 
