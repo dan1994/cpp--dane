@@ -7,8 +7,6 @@
 #include <boost/crc.hpp>
 #include <cstdint>
 #include <string>
-#include <type_traits>
-#include <utility>
 
 template <typename T>
 class DaneStream {
