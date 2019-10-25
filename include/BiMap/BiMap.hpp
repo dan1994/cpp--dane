@@ -41,3 +41,18 @@ bool BiMap<T, U>::insert(T t, U u) {
 
 	return true;
 }
+
+template <typename T, typename U>
+typename BiMap<T, U>::const_iterator BiMap<T, U>::begin() const {
+	return this->mapping.begin();
+}
+
+template <typename T, typename U>
+typename BiMap<T, U>::const_iterator BiMap<T, U>::end() const {
+	return this->mapping.end();
+}
+
+template <typename T, typename U>
+typename BiMap<T, U>::size_typeT BiMap<T, U>::size() const {
+	return this->mapping.size();
+}
