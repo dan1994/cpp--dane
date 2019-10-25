@@ -1,5 +1,6 @@
 #include "BiMap/BiMap.h"
 
+#include <algorithm>
 #include <gtest/gtest.h>
 
 TEST(BiMap, AccessNotExistingT) {
@@ -103,4 +104,38 @@ TEST(BiMap, CountExistingU) {
 	ASSERT_TRUE(bm.insert(1, 0)) << "Failed inserting to BiMap";
 	EXPECT_EQ(bm.countU(0), 1)
 		<< "Count for existing value returns wrong value";
+}
+
+TEST(BiMap, EmptyMapSize) {
+	BiMap<int, int> bm;
+	EXPECT_EQ(bm.size(), 0) << "Size of empty map is not 0";
+}
+
+TEST(BiMap, MapSizeMatches) {
+	BiMap<int, int> bm;
+	ASSERT_TRUE(bm.insert(0, 1)) << "Failed inserting to BiMap";
+	ASSERT_TRUE(bm.insert(1, 2)) << "Failed inserting to BiMap";
+	ASSERT_TRUE(bm.insert(2, 3)) << "Failed inserting to BiMap";
+	EXPECT_EQ(bm.size(), 3) << "Size of map doesn't match num of elements";
+}
+
+TEST(BiMap, EmptyMapIterator) {
+	BiMap<int, int> bm;
+	std::for_each(bm.begin(), bm.end(), [](auto &p) {
+		FAIL() << "Iterating over empty BiMap";
+	});
+}
+
+TEST(BiMap, MapIterator) {
+	BiMap<int, int> bm;
+	ASSERT_TRUE(bm.insert(0, 1)) << "Failed inserting to BiMap";
+	ASSERT_TRUE(bm.insert(1, 2)) << "Failed inserting to BiMap";
+	ASSERT_TRUE(bm.insert(2, 3)) << "Failed inserting to BiMap";
+	auto count = 0;
+	std::for_each(bm.begin(), bm.end(), [&count](auto &p) {
+		EXPECT_EQ(p.first, p.second - 1);
+		count++;
+	});
+	EXPECT_EQ(count, 3)
+		<< "Iterator went over different amount of items than expected";
 }
